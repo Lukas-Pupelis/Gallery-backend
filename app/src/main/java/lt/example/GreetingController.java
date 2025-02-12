@@ -1,4 +1,4 @@
-package com.example;
+package lt.example;
 
 import java.util.concurrent.atomic.AtomicLong;
 

@@ -8,7 +8,7 @@
     <!-- lookup parent from repository -->
   </parent>
 
-  <groupId>com.example</groupId>
+  <groupId>lt.example</groupId>
   <artifactId>demo</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
@@ -20,6 +20,12 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.release>17</maven.compiler.release>
   </properties>
+
+  <modules>
+    <module>app</module>
+    <module>bl</module>
+    <module>model</module>
+  </modules>
 
   <dependencyManagement>
     <dependencies>
@@ -123,11 +129,5 @@
       </plugins>
     </pluginManagement>
   </build>
-
-  <modules>
-    <module>app</module>
-    <module>bl</module>
-    <module>model</module>
-  </modules>
 
 </project>
