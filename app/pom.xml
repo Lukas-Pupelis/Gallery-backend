@@ -6,11 +6,9 @@
     <artifactId>demo</artifactId>
     <groupId>lt.example</groupId>
     <version>0.0.1</version>
-
   </parent>
 
   <artifactId>app</artifactId>
-
   <name>app</name>
 
   <dependencies>
@@ -19,7 +17,4 @@
       <artifactId>spring-boot-starter-web</artifactId>
     </dependency>
   </dependencies>
-
-  <build>
-  </build>
 </project>
