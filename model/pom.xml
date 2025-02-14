@@ -11,4 +11,13 @@
   <artifactId>model</artifactId>
   <name>model</name>
 
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.flywaydb</groupId>
+        <artifactId>flyway-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
+
 </project>
