@@ -27,6 +27,7 @@
     <junit.version>5.11.0</junit.version>
     <flyway.version>10.20.1</flyway.version>
     <hibernate.version>6.6.7.Final</hibernate.version>
+    <postgres.version>42.7.5</postgres.version>
   </properties>
 
   <modules>
@@ -51,7 +52,7 @@
             <dependency>
               <groupId>org.postgresql</groupId>
               <artifactId>postgresql</artifactId>
-              <version>${postgresql.version}</version>
+              <version>${postgres.version}</version>
             </dependency>
           </dependencies>
         </plugin>
