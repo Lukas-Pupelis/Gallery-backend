@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @RestController
 public class TimestampController {
 
-    @GetMapping("/time")
+    @GetMapping("/api/time")
     public ResponseEntity<String> getCurrentTime() {
         LocalDateTime now = LocalDateTime.now();
         return ResponseEntity.ok(now.toString());
