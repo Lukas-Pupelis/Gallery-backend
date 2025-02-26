@@ -15,20 +15,22 @@ public class UploadController {
 
     @PostMapping("/api/upload")
     public ResponseEntity<Map<String, String>>
-    uploadImage(@RequestParam("file")MultipartFile file) {
+    uploadImage(@RequestParam("file")MultipartFile file,
+            @RequestParam("tags") String tags) {
         System.out.println(file.getOriginalFilename());
         System.out.println(file.getContentType());
         System.out.println(file.getSize());
         System.out.println("method called");
+        System.out.println(tags);
         Map<String, String> response = new HashMap<>();
         if (file.isEmpty()) {
             response.put("message", "File is empty");
-            System.out.println("File empty");
+            //System.out.println("File empty");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
         else {
             response.put("message", "File uploaded");
-            System.out.println("File uploaded");
+            //System.out.println("File uploaded");
             return ResponseEntity.status(HttpStatus.OK).body(response);
         }
     }
