@@ -22,11 +22,9 @@ public class Tag {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    // Ensure the tag name is unique and not null.
     @Column(name = "name", unique = true, nullable = false)
     private String name;
 
-    // Mapped relationship; not strictly needed for the insert operation, but useful for bidirectional access.
     @ManyToMany(mappedBy = "tags")
     private Set<Photo> photos;
 

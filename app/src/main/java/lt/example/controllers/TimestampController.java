@@ -1,4 +1,4 @@
-package lt.example;
+package lt.example.controllers;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

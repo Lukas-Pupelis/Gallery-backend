@@ -1,4 +1,4 @@
-package lt.example;
+package lt.example.controllers;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,12 +25,10 @@ public class UploadController {
         Map<String, String> response = new HashMap<>();
         if (file.isEmpty()) {
             response.put("message", "File is empty");
-            //System.out.println("File empty");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
         else {
             response.put("message", "File uploaded");
-            //System.out.println("File uploaded");
             return ResponseEntity.status(HttpStatus.OK).body(response);
         }
     }
