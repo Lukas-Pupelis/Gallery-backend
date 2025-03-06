@@ -32,6 +32,13 @@ public class Photo {
     @Column(name = "photo")
     private byte[] photo;
 
+    @Column(name = "name")
+    private String photoName;
+
+    @Column(name = "description")
+    private String photoDescription;
+
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false, nullable = false)
     private LocalDateTime createdAt;

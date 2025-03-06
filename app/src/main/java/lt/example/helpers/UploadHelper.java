@@ -19,7 +19,7 @@ public class UploadHelper {
         this.photoService = photoService;
     }
 
-    public void processUpload(MultipartFile file, String tagsStr) throws IOException {
+    public void processUpload(MultipartFile file, String photoName, String photoDescription, String tagsStr) throws IOException {
         byte[] photoData = file.getBytes();
         String[] tagArray = tagsStr.split(",");
         Set<String> tagNames = new HashSet<>();
@@ -27,6 +27,6 @@ public class UploadHelper {
                 .map(String::trim)
                 .filter(tag -> !tag.isEmpty())
                 .forEach(tagNames::add);
-        photoService.savePhoto(photoData, tagNames);
+        photoService.savePhoto(photoData, photoName, photoDescription, tagNames);
     }
 }

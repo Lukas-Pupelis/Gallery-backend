@@ -20,9 +20,11 @@ public class PhotoService {
     private final PhotoRepository photoRepository;
     private final TagRepository tagRepository;
 
-    public Photo savePhoto(byte[] photoData, Set<String> tagNames) {
+    public Photo savePhoto(byte[] photoData, String photoName, String photoDescription, Set<String> tagNames) {
         Photo photo = new Photo();
         photo.setPhoto(photoData);
+        photo.setPhotoName(photoName);
+        photo.setPhotoDescription(photoDescription);
 
         Set<Tag> tagSet = tagNames.stream()
         .map(String::trim)

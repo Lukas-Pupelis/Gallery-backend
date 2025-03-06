@@ -1,17 +1,14 @@
 package lt.example.dtos;
 
-import java.util.Set;
+import org.springframework.web.multipart.MultipartFile;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
 public class UploadDto {
-    private byte[] photoData;
-    private Set<String> tagNames;
-
-    public UploadDto(byte[] photoData, Set<String> tagNames) {
-        this.photoData = photoData;
-        this.tagNames = tagNames;
-    }
+    private MultipartFile file;
+    private String photoName;
+    private String photoDescription;
+    private String tags;
 }
