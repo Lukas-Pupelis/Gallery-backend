@@ -1,8 +1,6 @@
 package lt.example.controllers;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import lt.example.helpers.UploadHelper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,22 +19,17 @@ public class UploadController {
     }
 
     @PostMapping("/api/upload")
-    public ResponseEntity<Map<String, String>> uploadImage(
+    public ResponseEntity<String> uploadImage(
         @RequestParam("file") MultipartFile file,
         @RequestParam("tags") String tags) {
-
-        Map<String, String> response = new HashMap<>();
         if (file.isEmpty()) {
-            response.put("message", "File is empty");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"message\": \"File is empty\"}");
         }
         try {
             uploadHelper.processUpload(file, tags);
-            response.put("message", "File uploaded");
-            return ResponseEntity.ok(response);
+            return ResponseEntity.ok("{\"message\": \"File uploaded\"}");
         } catch (IOException e) {
-            response.put("message", "Error processing file");
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("{\"message\": \"Error processing file\"}");
         }
     }
 }
