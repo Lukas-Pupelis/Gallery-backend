@@ -36,42 +36,18 @@
     <module>model</module>
   </modules>
 
-  <build>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.flywaydb</groupId>
-          <artifactId>flyway-maven-plugin</artifactId>
-          <version>${flyway.version}</version>
-          <configuration>
-            <url>jdbc:postgresql://localhost:5432/db</url>
-            <user>user</user>
-            <password>psw</password>
-          </configuration>
-          <dependencies>
-            <dependency>
-              <groupId>org.postgresql</groupId>
-              <artifactId>postgresql</artifactId>
-              <version>${postgres.version}</version>
-            </dependency>
-          </dependencies>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-  </build>
-
   <dependencyManagement>
     <dependencies>
       <dependency>
         <groupId>lt.example</groupId>
         <artifactId>bl</artifactId>
-        <version>0.0.1</version>
+        <version>${version}</version>
         <scope>compile</scope>
       </dependency>
       <dependency>
         <groupId>lt.example</groupId>
         <artifactId>model</artifactId>
-        <version>0.0.1</version>
+        <version>${version}</version>
         <scope>compile</scope>
       </dependency>
       <dependency>

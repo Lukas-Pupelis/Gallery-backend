@@ -11,21 +11,6 @@
   <artifactId>model</artifactId>
   <name>model</name>
 
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.flywaydb</groupId>
-        <artifactId>flyway-maven-plugin</artifactId>
-        <dependencies>
-          <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-          </dependency>
-        </dependencies>
-      </plugin>
-    </plugins>
-  </build>
-
   <dependencies>
     <dependency>
       <groupId>org.springframework.boot</groupId>

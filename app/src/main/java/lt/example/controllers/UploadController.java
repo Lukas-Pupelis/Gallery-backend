@@ -2,6 +2,7 @@ package lt.example.controllers;
 
 import java.io.IOException;
 
+import lombok.RequiredArgsConstructor;
 import lt.example.dtos.UploadDto;
 import lt.example.helpers.UploadHelper;
 import org.springframework.http.HttpStatus;
@@ -12,13 +13,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
+@RequiredArgsConstructor
 public class UploadController {
 
     private final UploadHelper uploadHelper;
-
-    public UploadController(UploadHelper uploadHelper) {
-        this.uploadHelper = uploadHelper;
-    }
 
     @PostMapping("/api/upload")
     public ResponseEntity<String> uploadImage(@ModelAttribute UploadDto uploadDto) {
