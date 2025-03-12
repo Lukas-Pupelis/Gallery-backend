@@ -1,5 +1,7 @@
 package lt.example.dtos;
 
+import java.util.List;
+
 import org.springframework.web.multipart.MultipartFile;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,5 +12,5 @@ public class UploadDto {
     private MultipartFile file;
     private String photoName;
     private String photoDescription;
-    private String tags;
+    private List<String> tags;
 }

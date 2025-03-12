@@ -22,20 +22,19 @@ public class PhotoService {
 
     public Photo savePhoto(byte[] photoData, String photoName, String photoDescription, Set<String> tagNames) {
         Photo photo = new Photo();
-        photo.setPhoto(photoData);
-        photo.setPhotoName(photoName);
-        photo.setPhotoDescription(photoDescription);
+        photo.setFile(photoData);
+        photo.setName(photoName);
+        photo.setDescription(photoDescription);
 
         Set<Tag> tagSet = tagNames.stream()
-        .map(String::trim)
-        .filter(tagName -> !tagName.isEmpty())
         .map(tagName -> Optional.ofNullable(tagRepository.findByName(tagName))
-            .orElseGet(() -> {
-                Tag tag = new Tag();
-                tag.setName(tagName);
-                return tagRepository.save(tag);
-            }))
+        .orElseGet(() -> {
+            Tag tag = new Tag();
+            tag.setName(tagName);
+            return tagRepository.save(tag);
+        }))
         .collect(Collectors.toSet());
+
 
         photo.setTags(tagSet);
         return photoRepository.save(photo);

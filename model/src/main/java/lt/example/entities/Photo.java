@@ -29,14 +29,14 @@ public class Photo {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "photo")
-    private byte[] photo;
+    @Column(name = "file")
+    private byte[] file;
 
     @Column(name = "name")
-    private String photoName;
+    private String name;
 
     @Column(name = "description")
-    private String photoDescription;
+    private String description;
 
 
     @CreationTimestamp
