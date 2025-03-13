@@ -8,7 +8,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class UploadDto {
+public class PhotoUploadDto {
     private MultipartFile file;
     private String photoName;
     private String photoDescription;

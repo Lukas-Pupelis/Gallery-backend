@@ -3,8 +3,8 @@ package lt.example.controllers;
 import java.io.IOException;
 
 import lombok.RequiredArgsConstructor;
-import lt.example.dtos.ResponseDto;
-import lt.example.dtos.UploadDto;
+import lt.example.GenericResponse;
+import lt.example.dtos.PhotoUploadDto;
 import lt.example.helpers.UploadHelper;
 
 import org.springframework.http.HttpStatus;
@@ -20,19 +20,19 @@ public class UploadController {
     private final UploadHelper uploadHelper;
 
     @PostMapping("/api/upload")
-    public ResponseEntity<ResponseDto> uploadImage(@ModelAttribute UploadDto uploadDto) {
-        if (uploadDto.getFile().isEmpty()) {
+    public ResponseEntity<GenericResponse> uploadImage(@ModelAttribute PhotoUploadDto photoUploadDto) {
+        if (photoUploadDto.getFile().isEmpty()) {
             return ResponseEntity
             .status(HttpStatus.BAD_REQUEST)
-            .body(new ResponseDto("File is empty"));
+            .body(new GenericResponse("File is empty"));
         }
         try {
-            uploadHelper.processUpload(uploadDto);
-            return ResponseEntity.ok(new ResponseDto("File uploaded"));
+            uploadHelper.processUpload(photoUploadDto);
+            return ResponseEntity.ok(new GenericResponse("File uploaded"));
         } catch (IOException e) {
             return ResponseEntity
             .status(HttpStatus.INTERNAL_SERVER_ERROR)
-            .body(new ResponseDto("Error processing file"));
+            .body(new GenericResponse("Error processing file"));
         }
     }
 }

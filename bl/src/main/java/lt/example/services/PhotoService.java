@@ -1,6 +1,5 @@
 package lt.example.services;
 
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -27,7 +26,7 @@ public class PhotoService {
         photo.setDescription(photoDescription);
 
         Set<Tag> tagSet = tagNames.stream()
-        .map(tagName -> Optional.ofNullable(tagRepository.findByName(tagName))
+        .map(tagName -> tagRepository.findByName(tagName)
         .orElseGet(() -> {
             Tag tag = new Tag();
             tag.setName(tagName);
