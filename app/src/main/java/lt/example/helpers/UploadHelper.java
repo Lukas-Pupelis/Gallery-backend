@@ -26,8 +26,7 @@ public class UploadHelper {
             .map(String::trim)
             .filter(tag -> !tag.isEmpty())
             .collect(Collectors.toSet());
-        }
-        else {
+        } else {
             tagNames = Collections.emptySet();
         }
         photoService.savePhoto(

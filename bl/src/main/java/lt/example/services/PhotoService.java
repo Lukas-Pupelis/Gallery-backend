@@ -19,7 +19,7 @@ public class PhotoService {
     private final PhotoRepository photoRepository;
     private final TagRepository tagRepository;
 
-    public Photo savePhoto(byte[] photoData, String photoName, String photoDescription, Set<String> tagNames) {
+    public void savePhoto(byte[] photoData, String photoName, String photoDescription, Set<String> tagNames) {
         Photo photo = new Photo();
         photo.setFile(photoData);
         photo.setName(photoName);
@@ -27,15 +27,16 @@ public class PhotoService {
 
         Set<Tag> tagSet = tagNames.stream()
         .map(tagName -> tagRepository.findByName(tagName)
-        .orElseGet(() -> {
-            Tag tag = new Tag();
-            tag.setName(tagName);
-            return tagRepository.save(tag);
-        }))
+        .orElseGet(() -> BuildTag(tagName)))
         .collect(Collectors.toSet());
 
-
         photo.setTags(tagSet);
-        return photoRepository.save(photo);
+        photoRepository.save(photo);
+    }
+
+    public Tag BuildTag(String tagName) {
+        Tag tag = new Tag();
+        tag.setName(tagName);
+        return tagRepository.save(tag);
     }
 }
