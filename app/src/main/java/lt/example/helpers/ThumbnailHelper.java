@@ -1,5 +1,6 @@
 package lt.example.helpers;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -20,33 +21,31 @@ public class ThumbnailHelper {
             throw new IOException("Could not read image data");
         }
 
-        int originalWidth = originalImage.getWidth();
-        int originalHeight = originalImage.getHeight();
-
-        int newWidth, newHeight;
-        if (originalWidth >= originalHeight) {
-            newHeight = 300;
-            newWidth = (int) (originalWidth * (300.0 / originalHeight));
-        } else {
-            newWidth = 300;
-            newHeight = (int) (originalHeight * (300.0 / originalWidth));
-        }
-
+        int maxSize = 300;
         BufferedImage scaled = Scalr.resize(
-                originalImage,
-                Scalr.Method.QUALITY,
-                newWidth,
-                newHeight
+            originalImage,
+            Scalr.Method.QUALITY,
+            Scalr.Mode.AUTOMATIC,
+            maxSize,
+            maxSize
         );
 
-        int x = (scaled.getWidth() - 300) / 2;
-        int y = (scaled.getHeight() - 300) / 2;
-        BufferedImage finalThumb = Scalr.crop(scaled, x, y, 300, 300);
+        BufferedImage finalThumb = new BufferedImage(
+            maxSize,
+            maxSize,
+            BufferedImage.TYPE_INT_RGB
+        );
+        Graphics2D g2d = finalThumb.createGraphics();
+        g2d.setColor(Color.WHITE);
+        g2d.fillRect(0, 0, maxSize, maxSize);
+
+        int x = (maxSize - scaled.getWidth()) / 2;
+        int y = (maxSize - scaled.getHeight()) / 2;
+        g2d.drawImage(scaled, x, y, null);
+        g2d.dispose();
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ImageIO.write(finalThumb, "png", baos);
         return Base64.getEncoder().encodeToString(baos.toByteArray());
     }
 }
-
-

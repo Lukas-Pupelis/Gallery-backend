@@ -18,12 +18,11 @@ public class SendHelper {
     private final ThumbnailHelper thumbnailHelper;
 
     public PhotoSendDto toDto(Photo photo) {
-        System.out.println("Mapping photo id " + photo.getId() + " with tags: " + photo.getTags());
-
         PhotoSendDto dto = new PhotoSendDto();
         dto.setId(photo.getId());
         dto.setName(photo.getName());
         dto.setDescription(photo.getDescription());
+        dto.setCreatedAt(photo.getCreatedAt());
         try {
             dto.setThumbnail(thumbnailHelper.createThumbnailBase64(photo.getFile()));
         } catch (IOException e) {
