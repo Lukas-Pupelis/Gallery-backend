@@ -50,6 +50,6 @@ public class PhotoService {
             ? Sort.by(sortField).descending()
             : Sort.by(sortField).ascending();
         Pageable pageable = PageRequest.of(page, size, sort);
-        return photoRepository.findAll(pageable);
+        return photoRepository.findAllWithTags(pageable);
     }
 }
