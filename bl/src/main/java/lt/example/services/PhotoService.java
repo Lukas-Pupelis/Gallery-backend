@@ -8,6 +8,11 @@ import lt.example.entities.Photo;
 import lt.example.entities.Tag;
 import lt.example.repositories.PhotoRepository;
 import lt.example.repositories.TagRepository;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,16 +32,24 @@ public class PhotoService {
 
         Set<Tag> tagSet = tagNames.stream()
         .map(tagName -> tagRepository.findByName(tagName)
-        .orElseGet(() -> BuildTag(tagName)))
+        .orElseGet(() -> buildTag(tagName)))
         .collect(Collectors.toSet());
 
         photo.setTags(tagSet);
         photoRepository.save(photo);
     }
 
-    public Tag BuildTag(String tagName) {
+    public Tag buildTag(String tagName) {
         Tag tag = new Tag();
         tag.setName(tagName);
         return tagRepository.save(tag);
+    }
+
+    public Page<Photo> getPhotos(int page, int size, String sortField, String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase("desc")
+            ? Sort.by(sortField).descending()
+            : Sort.by(sortField).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        return photoRepository.findAll(pageable);
     }
 }
