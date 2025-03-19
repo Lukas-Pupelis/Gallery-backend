@@ -54,13 +54,13 @@
       <dependency>
         <groupId>lt.example</groupId>
         <artifactId>bl</artifactId>
-        <version>${version}</version>
+        <version>${project.version}</version>
         <scope>compile</scope>
       </dependency>
       <dependency>
         <groupId>lt.example</groupId>
         <artifactId>model</artifactId>
-        <version>${version}</version>
+        <version>${project.version}</version>
         <scope>compile</scope>
       </dependency>
       <dependency>
