@@ -4,10 +4,12 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
+import lt.example.criteria.PhotoSearchCriteria;
 import lt.example.entities.Photo;
 import lt.example.entities.Tag;
 import lt.example.repositories.PhotoRepository;
 import lt.example.repositories.TagRepository;
+import lt.example.specifications.PhotoSpecification;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -51,5 +53,14 @@ public class PhotoService {
             : Sort.by(sortField).ascending();
         Pageable pageable = PageRequest.of(page, size, sort);
         return photoRepository.findAllWithTags(pageable);
+    }
+
+    public Page<Photo> searchPhotos(PhotoSearchCriteria criteria, int page, int size, String sortField, String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase("desc")
+            ? Sort.by(sortField).descending()
+            : Sort.by(sortField).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        PhotoSpecification spec = new PhotoSpecification(criteria);
+        return photoRepository.findAll(spec, pageable);
     }
 }
