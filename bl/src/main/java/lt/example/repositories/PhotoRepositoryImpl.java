@@ -38,8 +38,8 @@ public class PhotoRepositoryImpl implements PhotoRepositoryCustom {
             List<Order> orders = new ArrayList<>();
             for (Sort.Order sortOrder : pageable.getSort()) {
                 orders.add(
-                    sortOrder.isAscending() ? cb.asc(root.get(sortOrder.getProperty()))
-                    : cb.desc(root.get(sortOrder.getProperty()))
+                sortOrder.isAscending() ? cb.asc(root.get(sortOrder.getProperty()))
+                : cb.desc(root.get(sortOrder.getProperty()))
                 );
             }
             photoCq.orderBy(orders);

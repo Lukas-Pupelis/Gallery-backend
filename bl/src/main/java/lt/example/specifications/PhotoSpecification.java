@@ -16,14 +16,14 @@ public class PhotoSpecification {
 
     public static Specification<Photo> nameContains(String name) {
         return (root, query, builder) ->
-                builder.like(builder.lower(root.get(Photo_.name)),
-                        trimString(name));
+            builder.like(builder.lower(root.get(Photo_.name)),
+                trimString(name));
     }
 
     public static Specification<Photo> descriptionContains(String description) {
         return (root, query, builder) ->
-                builder.like(builder.lower(root.get(Photo_.description)),
-                        trimString(description));
+            builder.like(builder.lower(root.get(Photo_.description)),
+                trimString(description));
     }
 
     public static Specification<Photo> createdAtOn(LocalDate date) {
@@ -38,7 +38,7 @@ public class PhotoSpecification {
         return (root, query, builder) -> {
             Join<Photo, Tag> tagJoin = root.join(Photo_.tags, JoinType.INNER);
             return builder.like(builder.lower(tagJoin.get(Tag_.name)),
-                    trimString(tag));
+                trimString(tag));
         };
     }
 

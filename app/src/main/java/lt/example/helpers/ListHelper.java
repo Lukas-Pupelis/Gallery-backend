@@ -2,13 +2,13 @@ package lt.example.helpers;
 
 import lt.example.dtos.PhotoSendDto;
 import lt.example.entities.Photo;
+import lt.example.services.ThumbnailService;
 import lt.example.repositories.TagRepository;
-import lt.example.utilities.ThumbnailUtility;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 import lombok.RequiredArgsConstructor;
+
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -18,20 +18,19 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ListHelper {
 
+    private final ThumbnailService thumbnailService;
     private final TagRepository tagRepository;
 
-    public PhotoSendDto toDto(Photo photo, Map<Long, List<String>> tagMap) {
+    public PhotoSendDto toDto(Photo photo, Map<Long, List<String>> tagMap) throws IOException {
         PhotoSendDto dto = new PhotoSendDto();
         dto.setId(photo.getId());
         dto.setName(photo.getName());
         dto.setDescription(photo.getDescription());
         dto.setCreatedAt(photo.getCreatedAt());
-        try {
-            dto.setThumbnail(ThumbnailUtility.createThumbnailBase64(photo.getFile()));
-        } catch (IOException e) {
-            throw new RuntimeException("Error generating thumbnail", e);
-        }
-        dto.setTags(tagMap.getOrDefault(photo.getId(), Collections.emptyList()));
+        dto.setThumbnail(thumbnailService.createThumbnailBase64(photo.getFile()));
+
+        List<String> tagNames = tagMap.getOrDefault(photo.getId(), List.of());
+        dto.setTags(tagNames);
         return dto;
     }
 
@@ -44,9 +43,16 @@ public class ListHelper {
 
         Map<Long, List<String>> tagMap = tagData.stream()
         .collect(Collectors.groupingBy(
-            arr -> (Long) arr[0],
-            Collectors.mapping(arr -> (String) arr[1], Collectors.toList())
+        arr -> (Long) arr[0],
+        Collectors.mapping(arr -> (String) arr[1], Collectors.toList())
         ));
-        return photos.map(photo -> toDto(photo, tagMap));
+
+        return photos.map(photo -> {
+            try {
+                return toDto(photo, tagMap);
+            } catch (IOException e) {
+                throw new RuntimeException("Error converting photo to DTO", e);
+            }
+        });
     }
 }
