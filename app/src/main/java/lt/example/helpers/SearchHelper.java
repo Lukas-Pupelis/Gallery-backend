@@ -14,9 +14,9 @@ import lombok.RequiredArgsConstructor;
 public class SearchHelper {
 
     private final PhotoService photoService;
-    private final SendHelper sendHelper;
+    private final ListHelper listHelper;
 
-    public PhotoSearchCriteria toBusinessCriteria(PhotoSearchDto dto) {
+    private PhotoSearchCriteria toBusinessCriteria(PhotoSearchDto dto) {
         PhotoSearchCriteria criteria = new PhotoSearchCriteria();
         criteria.setName(dto.getName());
         criteria.setDescription(dto.getDescription());
@@ -28,6 +28,6 @@ public class SearchHelper {
     public Page<PhotoSendDto> processSearch(PhotoSearchDto searchDto, int page, int size, String sortField, String sortDir) {
         PhotoSearchCriteria criteria = toBusinessCriteria(searchDto);
         Page<Photo> photosPage = photoService.searchPhotos(criteria, page, size, sortField, sortDir);
-        return sendHelper.toDtoPage(photosPage);
+        return listHelper.toDtoPage(photosPage);
     }
 }

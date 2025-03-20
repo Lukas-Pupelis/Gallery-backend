@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
-public class SendHelper {
+public class ListHelper {
 
     private final ThumbnailHelper thumbnailHelper;
 

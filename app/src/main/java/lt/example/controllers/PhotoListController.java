@@ -5,7 +5,7 @@ import lt.example.dtos.PhotoSearchDto;
 import lt.example.dtos.PhotoSendDto;
 import lt.example.entities.Photo;
 import lt.example.helpers.SearchHelper;
-import lt.example.helpers.SendHelper;
+import lt.example.helpers.ListHelper;
 import lt.example.services.PhotoService;
 
 import org.springframework.data.domain.Page;
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class PhotoListController {
 
     private final PhotoService photoService;
-    private final SendHelper sendHelper;
+    private final ListHelper listHelper;
     private final SearchHelper searchHelper;
 
     @GetMapping
@@ -30,7 +30,7 @@ public class PhotoListController {
             @RequestParam(defaultValue = "id") String sortField,
             @RequestParam(defaultValue = "asc") String sortDir) {
         Page<Photo> photosPage = photoService.getPhotos(page, size, sortField, sortDir);
-        return sendHelper.toDtoPage(photosPage);
+        return listHelper.toDtoPage(photosPage);
     }
 
     @GetMapping("/search")
