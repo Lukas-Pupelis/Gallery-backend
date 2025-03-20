@@ -31,7 +31,15 @@ public class SearchHelper {
 
     public Page<PhotoSendDto> processSearch(PhotoSearchDto searchDto) {
         PhotoSearchCriteria criteria = toBusinessCriteria(searchDto);
-        Page<Photo> photosPage = photoService.searchPhotos(criteria);
+        Page<Photo> photosPage;
+
+        if(searchDto.getName() != null && !searchDto.getName().trim().isEmpty()
+        || (searchDto.getDescription() != null && !searchDto.getDescription().trim().isEmpty())
+        || (searchDto.getTag() != null && !searchDto.getTag().trim().isEmpty())
+        || (searchDto.getCreatedAt() != null)) {
+            photosPage = photoService.searchPhotos(criteria);
+        } else photosPage = photoService.getPhotos(criteria);
+
         return listHelper.toDtoPage(photosPage);
     }
 }

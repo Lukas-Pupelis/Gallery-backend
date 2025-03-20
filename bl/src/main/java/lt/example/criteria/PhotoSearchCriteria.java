@@ -1,6 +1,7 @@
 package lt.example.criteria;
 
 import java.time.LocalDate;
+import lt.example.enums.SortDirection;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -15,5 +16,5 @@ public class PhotoSearchCriteria {
     private int page;
     private int size;
     private String sortField;
-    private String sortDir;
+    private SortDirection sortDir;
 }

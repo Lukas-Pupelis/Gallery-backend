@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lt.example.criteria.PhotoSearchCriteria;
 import lt.example.entities.Photo;
 import lt.example.entities.Tag;
+import lt.example.enums.SortDirection;
 import lt.example.repositories.PhotoRepository;
 import lt.example.repositories.TagRepository;
 import lt.example.specifications.PhotoSpecification;
@@ -47,16 +48,16 @@ public class PhotoService {
         return tagRepository.save(tag);
     }
 
-    public Page<Photo> getPhotos(int page, int size, String sortField, String sortDir) {
-        Sort sort = sortDir.equalsIgnoreCase("desc")
-            ? Sort.by(sortField).descending()
-            : Sort.by(sortField).ascending();
-        Pageable pageable = PageRequest.of(page, size, sort);
+    public Page<Photo> getPhotos(PhotoSearchCriteria criteria) {
+        Sort sort = criteria.getSortDir() == SortDirection.desc
+                ? Sort.by(criteria.getSortField()).descending()
+                : Sort.by(criteria.getSortField()).ascending();
+        Pageable pageable = PageRequest.of(criteria.getPage(), criteria.getSize(), sort);
         return photoRepository.findAllWithTags(pageable);
     }
 
     public Page<Photo> searchPhotos(PhotoSearchCriteria criteria) {
-        Sort sort = criteria.getSortDir().equalsIgnoreCase("desc")
+        Sort sort = criteria.getSortDir() == SortDirection.desc
             ? Sort.by(criteria.getSortField()).descending()
             : Sort.by(criteria.getSortField()).ascending();
         Pageable pageable = PageRequest.of(criteria.getPage(), criteria.getSize(), sort);

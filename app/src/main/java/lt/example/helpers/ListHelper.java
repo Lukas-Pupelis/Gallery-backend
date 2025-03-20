@@ -1,9 +1,10 @@
 package lt.example.helpers;
 
-import lombok.RequiredArgsConstructor;
 import lt.example.dtos.PhotoSendDto;
 import lt.example.entities.Photo;
 import lt.example.entities.Tag;
+import lt.example.utilities.ThumbnailUtility;
+
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
@@ -12,10 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-@RequiredArgsConstructor
 public class ListHelper {
-
-    private final ThumbnailHelper thumbnailHelper;
 
     public PhotoSendDto toDto(Photo photo) {
         PhotoSendDto dto = new PhotoSendDto();
@@ -24,7 +22,7 @@ public class ListHelper {
         dto.setDescription(photo.getDescription());
         dto.setCreatedAt(photo.getCreatedAt());
         try {
-            dto.setThumbnail(thumbnailHelper.createThumbnailBase64(photo.getFile()));
+            dto.setThumbnail(ThumbnailUtility.createThumbnailBase64(photo.getFile()));
         } catch (IOException e) {
             throw new RuntimeException("Error generating thumbnail", e);
         }
