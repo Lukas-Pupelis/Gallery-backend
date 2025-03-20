@@ -15,4 +15,9 @@ public class PhotoSearchDto {
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate createdAt;
+
+    private int page;
+    private int size;
+    private String sortField;
+    private String sortDir;
 }

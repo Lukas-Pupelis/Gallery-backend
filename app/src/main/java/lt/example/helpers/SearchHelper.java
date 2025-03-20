@@ -22,12 +22,16 @@ public class SearchHelper {
         criteria.setDescription(dto.getDescription());
         criteria.setTag(dto.getTag());
         criteria.setCreatedAt(dto.getCreatedAt());
+        criteria.setPage(dto.getPage());
+        criteria.setSize(dto.getSize());
+        criteria.setSortField(dto.getSortField());
+        criteria.setSortDir(dto.getSortDir());
         return criteria;
     }
 
-    public Page<PhotoSendDto> processSearch(PhotoSearchDto searchDto, int page, int size, String sortField, String sortDir) {
+    public Page<PhotoSendDto> processSearch(PhotoSearchDto searchDto) {
         PhotoSearchCriteria criteria = toBusinessCriteria(searchDto);
-        Page<Photo> photosPage = photoService.searchPhotos(criteria, page, size, sortField, sortDir);
+        Page<Photo> photosPage = photoService.searchPhotos(criteria);
         return listHelper.toDtoPage(photosPage);
     }
 }

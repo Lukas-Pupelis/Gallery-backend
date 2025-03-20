@@ -55,11 +55,11 @@ public class PhotoService {
         return photoRepository.findAllWithTags(pageable);
     }
 
-    public Page<Photo> searchPhotos(PhotoSearchCriteria criteria, int page, int size, String sortField, String sortDir) {
-        Sort sort = sortDir.equalsIgnoreCase("desc")
-            ? Sort.by(sortField).descending()
-            : Sort.by(sortField).ascending();
-        Pageable pageable = PageRequest.of(page, size, sort);
+    public Page<Photo> searchPhotos(PhotoSearchCriteria criteria) {
+        Sort sort = criteria.getSortDir().equalsIgnoreCase("desc")
+            ? Sort.by(criteria.getSortField()).descending()
+            : Sort.by(criteria.getSortField()).ascending();
+        Pageable pageable = PageRequest.of(criteria.getPage(), criteria.getSize(), sort);
         PhotoSpecification spec = new PhotoSpecification(criteria);
         return photoRepository.findAll(spec, pageable);
     }

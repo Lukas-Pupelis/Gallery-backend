@@ -33,14 +33,14 @@ public class PhotoSpecification implements Specification<Photo> {
         if (criteria.getName() != null && !criteria.getName().trim().isEmpty()) {
             predicates.add(builder.like(
             builder.lower(root.get("name")),
-            "%" + criteria.getName().toLowerCase().trim() + "%"
+            trimString(criteria.getName())
             ));
         }
 
         if (criteria.getDescription() != null && !criteria.getDescription().trim().isEmpty()) {
             predicates.add(builder.like(
             builder.lower(root.get("description")),
-            "%" + criteria.getDescription().toLowerCase().trim() + "%"
+            trimString(criteria.getDescription())
             ));
         }
 
@@ -77,5 +77,9 @@ public class PhotoSpecification implements Specification<Photo> {
         }
 
         return builder.and(predicates.toArray(new Predicate[0]));
+    }
+
+    public String trimString(String string) {
+        return "%" + string.toLowerCase().trim() + "%";
     }
 }

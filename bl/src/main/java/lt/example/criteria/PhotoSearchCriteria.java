@@ -12,4 +12,8 @@ public class PhotoSearchCriteria {
     private String description;
     private LocalDate createdAt;
     private String tag;
+    private int page;
+    private int size;
+    private String sortField;
+    private String sortDir;
 }
