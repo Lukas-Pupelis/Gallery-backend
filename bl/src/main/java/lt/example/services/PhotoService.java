@@ -2,7 +2,6 @@ package lt.example.services;
 
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import lombok.RequiredArgsConstructor;
 import lt.example.criteria.PhotoSearchCriteria;
 import lt.example.entities.Photo;
@@ -11,7 +10,7 @@ import lt.example.enums.SortDirection;
 import lt.example.repositories.PhotoRepository;
 import lt.example.repositories.TagRepository;
 import lt.example.specifications.PhotoSpecification;
-
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -48,19 +47,25 @@ public class PhotoService {
         return tagRepository.save(tag);
     }
 
+    @Cacheable("photos")
     public Page<Photo> getPhotos(PhotoSearchCriteria criteria) {
         Sort sort = criteria.getSortDir() == SortDirection.desc
-                ? Sort.by(criteria.getSortField()).descending()
-                : Sort.by(criteria.getSortField()).ascending();
+            ? Sort.by(criteria.getSortField()).descending()
+            : Sort.by(criteria.getSortField()).ascending();
         Pageable pageable = PageRequest.of(criteria.getPage(), criteria.getSize(), sort);
         return photoRepository.findAllWithTags(pageable);
     }
 
+    @Cacheable("photos")
     public Page<Photo> searchPhotos(PhotoSearchCriteria criteria) {
         Sort sort = criteria.getSortDir() == SortDirection.desc
             ? Sort.by(criteria.getSortField()).descending()
             : Sort.by(criteria.getSortField()).ascending();
         Pageable pageable = PageRequest.of(criteria.getPage(), criteria.getSize(), sort);
-        return photoRepository.findAll(PhotoSpecification.buildSpecification(criteria), pageable);
+
+        return photoRepository.findAll(
+            PhotoSpecification.buildSpecification(criteria),
+            pageable
+        );
     }
 }
