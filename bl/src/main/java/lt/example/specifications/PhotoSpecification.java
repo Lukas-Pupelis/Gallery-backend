@@ -1,85 +1,74 @@
 package lt.example.specifications;
 
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Join;
-import jakarta.persistence.criteria.JoinType;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
-import lombok.RequiredArgsConstructor;
 import lt.example.criteria.PhotoSearchCriteria;
 import lt.example.entities.Photo;
+import lt.example.entities.Photo_;
 import lt.example.entities.Tag;
-
+import lt.example.entities.Tag_;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.lang.NonNull;
 
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
-@RequiredArgsConstructor
-public class PhotoSpecification implements Specification<Photo> {
+public class PhotoSpecification {
 
-    private final PhotoSearchCriteria criteria;
-
-    public Predicate toPredicate(@NonNull Root<Photo> root, CriteriaQuery<?> query, @NonNull CriteriaBuilder builder) {
-        List<Predicate> predicates = new ArrayList<>();
-
-        Objects.requireNonNull(query).distinct(true);
-
-        if (criteria.getName() != null && !criteria.getName().trim().isEmpty()) {
-            predicates.add(builder.like(
-            builder.lower(root.get("name")),
-            trimString(criteria.getName())
-            ));
-        }
-
-        if (criteria.getDescription() != null && !criteria.getDescription().trim().isEmpty()) {
-            predicates.add(builder.like(
-            builder.lower(root.get("description")),
-            trimString(criteria.getDescription())
-            ));
-        }
-
-        if (criteria.getCreatedAt() != null) {
-            LocalDate date = criteria.getCreatedAt();
-            LocalDateTime startOfDay = date.atStartOfDay();
-            LocalDateTime startOfNextDay = date.plusDays(1).atStartOfDay();
-            predicates.add(builder.between(root.get("createdAt"), startOfDay, startOfNextDay));
-        }
-
-        if (criteria.getTag() != null && !criteria.getTag().trim().isEmpty()) {
-            String[] tagsArray = criteria.getTag().split(",");
-            List<Predicate> tagPredicates = new ArrayList<>();
-
-            Join<Photo, Tag> tagJoin = root.join("tags", JoinType.INNER);
-
-            for (String rawTag : tagsArray) {
-                String cleanedTag = rawTag
-                .replace("\"", "")
-                .replace("'", "")
-                .trim()
-                .toLowerCase();
-
-                if (!cleanedTag.isEmpty()) {
-                    tagPredicates.add(
-                    builder.like(builder.lower(tagJoin.get("name")), "%" + cleanedTag + "%")
-                    );
-                }
-            }
-
-            if (!tagPredicates.isEmpty()) {
-                predicates.add(builder.or(tagPredicates.toArray(new Predicate[0])));
-            }
-        }
-
-        return builder.and(predicates.toArray(new Predicate[0]));
+    public static Specification<Photo> nameContains(String name) {
+        return (root, query, builder) ->
+                builder.like(builder.lower(root.get(Photo_.name)),
+                        trimString(name));
     }
 
-    public String trimString(String string) {
+    public static Specification<Photo> descriptionContains(String description) {
+        return (root, query, builder) ->
+                builder.like(builder.lower(root.get(Photo_.description)),
+                        trimString(description));
+    }
+
+    public static Specification<Photo> createdAtOn(LocalDate date) {
+        return (root, query, builder) -> {
+            LocalDateTime startOfDay = date.atStartOfDay();
+            LocalDateTime startOfNextDay = date.plusDays(1).atStartOfDay();
+            return builder.between(root.get(Photo_.createdAt), startOfDay, startOfNextDay);
+        };
+    }
+
+    public static Specification<Photo> tagContains(String tag) {
+        return (root, query, builder) -> {
+            Join<Photo, Tag> tagJoin = root.join(Photo_.tags, JoinType.INNER);
+            return builder.like(builder.lower(tagJoin.get(Tag_.name)),
+                    trimString(tag));
+        };
+    }
+
+    public static Specification<Photo> buildSpecification(PhotoSearchCriteria criteria) {
+        Specification<Photo> spec = Specification.where(null);
+
+        if (criteria.getName() != null && !criteria.getName().trim().isEmpty()) {
+            spec = spec.and(nameContains(criteria.getName()));
+        }
+        if (criteria.getDescription() != null && !criteria.getDescription().trim().isEmpty()) {
+            spec = spec.and(descriptionContains(criteria.getDescription()));
+        }
+        if (criteria.getCreatedAt() != null) {
+            spec = spec.and(createdAtOn(criteria.getCreatedAt()));
+        }
+        if (criteria.getTag() != null && !criteria.getTag().trim().isEmpty()) {
+            String[] tagsArray = criteria.getTag().split(",");
+            Specification<Photo> tagSpec = Specification.where(null);
+            for (String rawTag : tagsArray) {
+                String cleanedTag = rawTag.replace("\"", "").replace("'", "").trim();
+                if (!cleanedTag.isEmpty()) {
+                    tagSpec = tagSpec.or(tagContains(cleanedTag));
+                }
+            }
+            spec = spec.and(tagSpec);
+        }
+        return spec;
+    }
+
+    public static String trimString(String string) {
         return "%" + string.toLowerCase().trim() + "%";
     }
 }

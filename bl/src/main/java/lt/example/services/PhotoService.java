@@ -61,7 +61,6 @@ public class PhotoService {
             ? Sort.by(criteria.getSortField()).descending()
             : Sort.by(criteria.getSortField()).ascending();
         Pageable pageable = PageRequest.of(criteria.getPage(), criteria.getSize(), sort);
-        PhotoSpecification spec = new PhotoSpecification(criteria);
-        return photoRepository.findAll(spec, pageable);
+        return photoRepository.findAll(PhotoSpecification.buildSpecification(criteria), pageable);
     }
 }

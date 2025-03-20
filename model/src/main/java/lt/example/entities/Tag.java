@@ -9,8 +9,6 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import lombok.Getter;
 import lombok.Setter;
 
@@ -29,7 +27,6 @@ public class Tag {
     private String name;
 
     @ManyToMany(mappedBy = "tags")
-    @JsonIgnore
     private Set<Photo> photos;
 
 }
