@@ -1,6 +1,6 @@
 package lt.example.helpers;
 
-import lt.example.dtos.PhotoSendDto;
+import lt.example.dtos.PhotoListDto;
 import lt.example.entities.Photo;
 import lt.example.services.ThumbnailService;
 import lt.example.repositories.TagRepository;
@@ -16,13 +16,13 @@ import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
-public class ListHelper {
+public class PhotoListHelper {
 
     private final ThumbnailService thumbnailService;
     private final TagRepository tagRepository;
 
-    public PhotoSendDto toDto(Photo photo, Map<Long, List<String>> tagMap) throws IOException {
-        PhotoSendDto dto = new PhotoSendDto();
+    private PhotoListDto toDto(Photo photo, Map<Long, List<String>> tagMap) throws IOException {
+        PhotoListDto dto = new PhotoListDto();
         dto.setId(photo.getId());
         dto.setName(photo.getName());
         dto.setDescription(photo.getDescription());
@@ -34,7 +34,7 @@ public class ListHelper {
         return dto;
     }
 
-    public Page<PhotoSendDto> toDtoPage(Page<Photo> photos) {
+    public Page<PhotoListDto> toDtoPage(Page<Photo> photos) {
         Set<Long> photoIds = photos.getContent().stream()
         .map(Photo::getId)
         .collect(Collectors.toSet());

@@ -2,7 +2,7 @@ package lt.example.helpers;
 
 import lt.example.dtos.PhotoSearchDto;
 import lt.example.criteria.PhotoSearchCriteria;
-import lt.example.dtos.PhotoSendDto;
+import lt.example.dtos.PhotoListDto;
 import lt.example.entities.Photo;
 import lt.example.services.PhotoService;
 import org.springframework.data.domain.Page;
@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 public class SearchHelper {
 
     private final PhotoService photoService;
-    private final ListHelper listHelper;
+    private final PhotoListHelper photoListHelper;
 
     private PhotoSearchCriteria toBusinessCriteria(PhotoSearchDto dto) {
         PhotoSearchCriteria criteria = new PhotoSearchCriteria();
@@ -29,7 +29,7 @@ public class SearchHelper {
         return criteria;
     }
 
-    public Page<PhotoSendDto> processSearch(PhotoSearchDto searchDto) {
+    public Page<PhotoListDto> processSearch(PhotoSearchDto searchDto) {
         PhotoSearchCriteria criteria = toBusinessCriteria(searchDto);
         Page<Photo> photosPage;
 
@@ -40,6 +40,6 @@ public class SearchHelper {
             photosPage = photoService.searchPhotos(criteria);
         } else photosPage = photoService.getPhotos(criteria);
 
-        return listHelper.toDtoPage(photosPage);
+        return photoListHelper.toDtoPage(photosPage);
     }
 }

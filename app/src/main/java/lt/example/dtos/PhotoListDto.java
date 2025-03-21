@@ -10,7 +10,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class PhotoSendDto {
+public class PhotoListDto {
     private Long id;
     private String name;
     private String description;

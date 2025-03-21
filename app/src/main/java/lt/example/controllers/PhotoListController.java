@@ -2,7 +2,7 @@ package lt.example.controllers;
 
 import lombok.RequiredArgsConstructor;
 import lt.example.dtos.PhotoSearchDto;
-import lt.example.dtos.PhotoSendDto;
+import lt.example.dtos.PhotoListDto;
 import lt.example.helpers.SearchHelper;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +17,7 @@ public class PhotoListController {
     private final SearchHelper searchHelper;
 
     @GetMapping
-    public Page<PhotoSendDto> listPhotos(@ModelAttribute PhotoSearchDto searchDto) {
+    public Page<PhotoListDto> searchPhotos(@ModelAttribute PhotoSearchDto searchDto) {
         return searchHelper.processSearch(searchDto);
     }
 }
