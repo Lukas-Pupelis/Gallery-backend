@@ -32,6 +32,9 @@ public class Photo {
     @Column(name = "file")
     private byte[] file;
 
+    @Column(name = "thumbnail")
+    private String thumbnail;
+
     @Column(name = "name")
     private String name;
 

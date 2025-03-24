@@ -2,11 +2,11 @@ package lt.example.helpers;
 
 import lt.example.dtos.PhotoListDto;
 import lt.example.entities.Photo;
-import lt.example.services.ThumbnailService;
 import lt.example.repositories.TagRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 import lombok.RequiredArgsConstructor;
+import lt.example.services.PhotoService;
 
 import java.io.IOException;
 import java.util.List;
@@ -18,8 +18,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PhotoListHelper {
 
-    private final ThumbnailService thumbnailService;
     private final TagRepository tagRepository;
+    private final PhotoService photoService;
 
     private PhotoListDto toDto(Photo photo, Map<Long, List<String>> tagMap) throws IOException {
         PhotoListDto dto = new PhotoListDto();
@@ -27,7 +27,10 @@ public class PhotoListHelper {
         dto.setName(photo.getName());
         dto.setDescription(photo.getDescription());
         dto.setCreatedAt(photo.getCreatedAt());
-        dto.setThumbnail(thumbnailService.createThumbnailBase64(photo.getFile()));
+
+        if (photo.getThumbnail() == null) {
+            dto.setThumbnail(photoService.generateAndSaveThumbnail(photo.getId(), photo.getFile()));
+        } else dto.setThumbnail(photo.getThumbnail());
 
         List<String> tagNames = tagMap.getOrDefault(photo.getId(), List.of());
         dto.setTags(tagNames);

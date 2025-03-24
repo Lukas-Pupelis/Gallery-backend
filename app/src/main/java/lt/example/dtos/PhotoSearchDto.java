@@ -3,6 +3,7 @@ package lt.example.dtos;
 import java.time.LocalDate;
 import org.springframework.format.annotation.DateTimeFormat;
 import lt.example.enums.SortDirection;
+import lt.example.enums.SortField;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -19,6 +20,6 @@ public class PhotoSearchDto {
 
     private int page;
     private int size;
-    private String sortField;
+    private SortField sortField;
     private SortDirection sortDir;
 }

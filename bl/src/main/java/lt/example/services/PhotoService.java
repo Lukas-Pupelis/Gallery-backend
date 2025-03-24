@@ -1,5 +1,6 @@
 package lt.example.services;
 
+import java.io.IOException;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +11,8 @@ import lt.example.enums.SortDirection;
 import lt.example.repositories.PhotoRepository;
 import lt.example.repositories.TagRepository;
 import lt.example.specifications.PhotoSpecification;
-import org.springframework.cache.annotation.Cacheable;
+import lt.example.utilities.ThumbnailUtility;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -26,11 +28,12 @@ public class PhotoService {
     private final PhotoRepository photoRepository;
     private final TagRepository tagRepository;
 
-    public void savePhoto(byte[] photoData, String photoName, String photoDescription, Set<String> tagNames) {
+    public void savePhoto(byte[] photoData, String photoName, String photoDescription, Set<String> tagNames) throws IOException {
         Photo photo = new Photo();
         photo.setFile(photoData);
         photo.setName(photoName);
         photo.setDescription(photoDescription);
+        photo.setThumbnail(ThumbnailUtility.createThumbnailBase64(photoData));
 
         Set<Tag> tagSet = tagNames.stream()
         .map(tagName -> tagRepository.findByName(tagName)
@@ -47,20 +50,36 @@ public class PhotoService {
         return tagRepository.save(tag);
     }
 
-    @Cacheable("photos")
+    public String generateAndSaveThumbnail(Long photoId, byte[] file) {
+        Photo photo = photoRepository.findById(photoId)
+        .orElseThrow(() -> new RuntimeException("Photo not found for id: " + photoId));
+
+        if (photo.getThumbnail() == null) {
+            try {
+                String generatedThumbnail = ThumbnailUtility.createThumbnailBase64(file);
+                photo.setThumbnail(generatedThumbnail);
+
+                photoRepository.save(photo);
+                return generatedThumbnail;
+            } catch (IOException ex) {
+                throw new RuntimeException("Error generating thumbnail for photo id " + photoId, ex);
+            }
+        }
+        return photo.getThumbnail();
+    }
+
     public Page<Photo> getPhotos(PhotoSearchCriteria criteria) {
         Sort sort = criteria.getSortDir() == SortDirection.desc
-            ? Sort.by(criteria.getSortField()).descending()
-            : Sort.by(criteria.getSortField()).ascending();
+            ? Sort.by(String.valueOf(criteria.getSortField())).descending()
+            : Sort.by(String.valueOf(criteria.getSortField())).ascending();
         Pageable pageable = PageRequest.of(criteria.getPage(), criteria.getSize(), sort);
         return photoRepository.findAllWithTags(pageable);
     }
 
-    @Cacheable("photos")
     public Page<Photo> searchPhotos(PhotoSearchCriteria criteria) {
         Sort sort = criteria.getSortDir() == SortDirection.desc
-            ? Sort.by(criteria.getSortField()).descending()
-            : Sort.by(criteria.getSortField()).ascending();
+            ? Sort.by(String.valueOf(criteria.getSortField())).descending()
+            : Sort.by(String.valueOf(criteria.getSortField())).ascending();
         Pageable pageable = PageRequest.of(criteria.getPage(), criteria.getSize(), sort);
 
         return photoRepository.findAll(
