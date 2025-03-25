@@ -1,5 +1,6 @@
 package lt.example.helpers;
 
+import jakarta.persistence.Tuple;
 import lt.example.dtos.PhotoListDto;
 import lt.example.entities.Photo;
 import lt.example.repositories.TagRepository;
@@ -10,7 +11,6 @@ import lt.example.services.PhotoService;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -21,7 +21,7 @@ public class PhotoListHelper {
     private final TagRepository tagRepository;
     private final PhotoService photoService;
 
-    private PhotoListDto toDto(Photo photo, Map<Long, List<String>> tagMap) throws IOException {
+    private PhotoListDto toDto(Photo photo, List<String> tagList) throws IOException {
         PhotoListDto dto = new PhotoListDto();
         dto.setId(photo.getId());
         dto.setName(photo.getName());
@@ -32,8 +32,7 @@ public class PhotoListHelper {
             dto.setThumbnail(photoService.generateAndSaveThumbnail(photo.getId(), photo.getFile()));
         } else dto.setThumbnail(photo.getThumbnail());
 
-        List<String> tagNames = tagMap.getOrDefault(photo.getId(), List.of());
-        dto.setTags(tagNames);
+        dto.setTags(tagList);
         return dto;
     }
 
@@ -42,17 +41,16 @@ public class PhotoListHelper {
         .map(Photo::getId)
         .collect(Collectors.toSet());
 
-        List<Object[]> tagData = tagRepository.findPhotoTags(photoIds);
-
-        Map<Long, List<String>> tagMap = tagData.stream()
-        .collect(Collectors.groupingBy(
-        arr -> (Long) arr[0],
-        Collectors.mapping(arr -> (String) arr[1], Collectors.toList())
-        ));
+        List<Tuple> tagData = tagRepository.findPhotoTags(photoIds);
 
         return photos.map(photo -> {
+            List<String> tagList = tagData.stream()
+            .filter(tuple -> tuple.get("photoId", Long.class).equals(photo.getId()))
+            .map(tuple -> tuple.get("tagName", String.class))
+            .collect(Collectors.toList());
+
             try {
-                return toDto(photo, tagMap);
+                return toDto(photo, tagList);
             } catch (IOException e) {
                 throw new RuntimeException("Error converting photo to DTO", e);
             }

@@ -1,5 +1,6 @@
 package lt.example.repositories;
 
+import jakarta.persistence.Tuple;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Join;
@@ -24,21 +25,25 @@ public class TagRepositoryImpl implements TagRepositoryCustom {
     private EntityManager entityManager;
 
     @Override
-    public List<Object[]> findPhotoTags(Set<Long> photoIds) {
+    public List<Tuple> findPhotoTags(Set<Long> photoIds) {
         if (photoIds == null || photoIds.isEmpty()) {
             return List.of();
         }
 
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Object[]> cq = cb.createQuery(Object[].class);
+        CriteriaQuery<Tuple> cq = cb.createTupleQuery();
 
         Root<Photo> photoRoot = cq.from(Photo.class);
         Join<Photo, Tag> tagJoin = photoRoot.join(Photo_.tags, JoinType.INNER);
-        cq.multiselect(photoRoot.get(Photo_.id), tagJoin.get(Tag_.name));
+
+        cq.multiselect(
+            photoRoot.get(Photo_.id).alias("photoId"),
+            tagJoin.get(Tag_.name).alias("tagName")
+        );
         cq.where(photoRoot.get(Photo_.id).in(photoIds));
         cq.distinct(true);
 
-        TypedQuery<Object[]> query = entityManager.createQuery(cq);
+        TypedQuery<Tuple> query = entityManager.createQuery(cq);
         return query.getResultList();
     }
 }

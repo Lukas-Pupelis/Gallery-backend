@@ -7,6 +7,8 @@ import lt.example.entities.Photo;
 import lt.example.services.PhotoService;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
+
 import lombok.RequiredArgsConstructor;
 
 @Component
@@ -31,15 +33,18 @@ public class SearchHelper {
 
     public Page<PhotoListDto> processSearch(PhotoSearchDto searchDto) {
         PhotoSearchCriteria criteria = toBusinessCriteria(searchDto);
-        Page<Photo> photosPage;
 
-        if(searchDto.getName() != null && !searchDto.getName().trim().isEmpty()
-        || (searchDto.getDescription() != null && !searchDto.getDescription().trim().isEmpty())
-        || (searchDto.getTag() != null && !searchDto.getTag().trim().isEmpty())
-        || (searchDto.getCreatedAt() != null)) {
-            photosPage = photoService.searchPhotos(criteria);
-        } else photosPage = photoService.getPhotos(criteria);
+        Page<Photo> photosPage = hasSearchCriteria(searchDto)
+            ? photoService.searchPhotos(criteria)
+            : photoService.getPhotos(criteria);
 
         return photoListHelper.toDtoPage(photosPage);
+    }
+
+    private boolean hasSearchCriteria(PhotoSearchDto searchDto) {
+        return (StringUtils.hasText(searchDto.getName())
+            || StringUtils.hasText(searchDto.getDescription())
+            || StringUtils.hasText(searchDto.getTag())
+            || StringUtils.hasText(String.valueOf(searchDto.getCreatedAt())));
     }
 }

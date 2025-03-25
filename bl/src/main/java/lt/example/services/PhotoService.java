@@ -8,6 +8,7 @@ import lt.example.criteria.PhotoSearchCriteria;
 import lt.example.entities.Photo;
 import lt.example.entities.Tag;
 import lt.example.enums.SortDirection;
+import lt.example.enums.SortField;
 import lt.example.repositories.PhotoRepository;
 import lt.example.repositories.TagRepository;
 import lt.example.specifications.PhotoSpecification;
@@ -69,22 +70,33 @@ public class PhotoService {
     }
 
     public Page<Photo> getPhotos(PhotoSearchCriteria criteria) {
-        Sort sort = criteria.getSortDir() == SortDirection.desc
-            ? Sort.by(String.valueOf(criteria.getSortField())).descending()
-            : Sort.by(String.valueOf(criteria.getSortField())).ascending();
+        String sortField = mapSortField(criteria.getSortField());
+        Sort sort = criteria.getSortDir() == SortDirection.DESCENDING
+                ? Sort.by(sortField).descending()
+                : Sort.by(sortField).ascending();
         Pageable pageable = PageRequest.of(criteria.getPage(), criteria.getSize(), sort);
         return photoRepository.findAllWithTags(pageable);
     }
 
     public Page<Photo> searchPhotos(PhotoSearchCriteria criteria) {
-        Sort sort = criteria.getSortDir() == SortDirection.desc
-            ? Sort.by(String.valueOf(criteria.getSortField())).descending()
-            : Sort.by(String.valueOf(criteria.getSortField())).ascending();
+        String sortField = mapSortField(criteria.getSortField());
+        Sort sort = criteria.getSortDir() == SortDirection.DESCENDING
+                ? Sort.by(sortField).descending()
+                : Sort.by(sortField).ascending();
         Pageable pageable = PageRequest.of(criteria.getPage(), criteria.getSize(), sort);
 
         return photoRepository.findAll(
             PhotoSpecification.buildSpecification(criteria),
             pageable
         );
+    }
+
+    private String mapSortField(SortField sortField) {
+        return switch (sortField) {
+            case ID -> "id";
+            case NAME -> "name";
+            case DESCRIPTION -> "description";
+            case DATE -> "createdAt";
+        };
     }
 }
