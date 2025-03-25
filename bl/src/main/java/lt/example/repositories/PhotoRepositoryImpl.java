@@ -2,11 +2,9 @@ package lt.example.repositories;
 
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Order;
 import jakarta.persistence.criteria.Root;
 import lt.example.entities.Photo;
-import lt.example.entities.Photo_;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
@@ -31,15 +29,15 @@ public class PhotoRepositoryImpl implements PhotoRepositoryCustom {
 
         CriteriaQuery<Photo> photoCq = cb.createQuery(Photo.class);
         Root<Photo> root = photoCq.from(Photo.class);
-        root.fetch(Photo_.tags, JoinType.LEFT);
         photoCq.select(root).distinct(true);
 
         if (pageable.getSort().isSorted()) {
             List<Order> orders = new ArrayList<>();
             for (Sort.Order sortOrder : pageable.getSort()) {
                 orders.add(
-                sortOrder.isAscending() ? cb.asc(root.get(sortOrder.getProperty()))
-                : cb.desc(root.get(sortOrder.getProperty()))
+                sortOrder.isAscending()
+                    ? cb.asc(root.get(sortOrder.getProperty()))
+                    : cb.desc(root.get(sortOrder.getProperty()))
                 );
             }
             photoCq.orderBy(orders);

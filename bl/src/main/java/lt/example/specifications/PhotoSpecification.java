@@ -11,6 +11,9 @@ import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class PhotoSpecification {
 
@@ -34,11 +37,19 @@ public class PhotoSpecification {
         };
     }
 
-    public static Specification<Photo> tagContains(String tag) {
+    public static Specification<Photo> tagContainsAny(String tagsStr) {
         return (root, query, builder) -> {
+            List<String> cleanedTags = Arrays.stream(tagsStr.split(","))
+                    .map(String::trim)
+                    .filter(tag -> !tag.isEmpty())
+                    .map(String::toLowerCase)
+                    .collect(Collectors.toList());
+
+            if (cleanedTags.isEmpty()) {
+                return builder.conjunction();
+            }
             Join<Photo, Tag> tagJoin = root.join(Photo_.tags, JoinType.INNER);
-            return builder.like(builder.lower(tagJoin.get(Tag_.name)),
-                trimString(tag));
+            return tagJoin.get(Tag_.name).in(cleanedTags);
         };
     }
 
@@ -55,15 +66,7 @@ public class PhotoSpecification {
             spec = spec.and(createdAtOn(criteria.getCreatedAt()));
         }
         if (criteria.getTag() != null && !criteria.getTag().trim().isEmpty()) {
-            String[] tagsArray = criteria.getTag().split(",");
-            Specification<Photo> tagSpec = Specification.where(null);
-            for (String rawTag : tagsArray) {
-                String cleanedTag = rawTag.replace("\"", "").replace("'", "").trim();
-                if (!cleanedTag.isEmpty()) {
-                    tagSpec = tagSpec.or(tagContains(cleanedTag));
-                }
-            }
-            spec = spec.and(tagSpec);
+            spec = spec.and(tagContainsAny(criteria.getTag()));
         }
         return spec;
     }
