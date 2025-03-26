@@ -69,15 +69,6 @@ public class PhotoService {
         return photo.getThumbnail();
     }
 
-    public Page<Photo> getPhotos(PhotoSearchCriteria criteria) {
-        String sortField = mapSortField(criteria.getSortField());
-        Sort sort = criteria.getSortDir() == SortDirection.DESCENDING
-                ? Sort.by(sortField).descending()
-                : Sort.by(sortField).ascending();
-        Pageable pageable = PageRequest.of(criteria.getPage(), criteria.getSize(), sort);
-        return photoRepository.findAll(pageable);
-    }
-
     public Page<Photo> searchPhotos(PhotoSearchCriteria criteria) {
         String sortField = mapSortField(criteria.getSortField());
         Sort sort = criteria.getSortDir() == SortDirection.DESCENDING
