@@ -9,6 +9,7 @@ import lt.example.entities.Photo;
 import lt.example.entities.Tag;
 import lt.example.enums.SortDirection;
 import lt.example.enums.SortField;
+import lt.example.projections.PhotoListProjection;
 import lt.example.repositories.PhotoRepository;
 import lt.example.repositories.TagRepository;
 import lt.example.specifications.PhotoSpecification;
@@ -51,13 +52,13 @@ public class PhotoService {
         return tagRepository.save(tag);
     }
 
-    public String generateAndSaveThumbnail(Long photoId, byte[] file) {
+    public String generateAndSaveThumbnail(Long photoId) {
         Photo photo = photoRepository.findById(photoId)
         .orElseThrow(() -> new RuntimeException("Photo not found for id: " + photoId));
 
         if (photo.getThumbnail() == null) {
             try {
-                String generatedThumbnail = ThumbnailUtility.createThumbnailBase64(file);
+                String generatedThumbnail = ThumbnailUtility.createThumbnailBase64(photo.getFile());
                 photo.setThumbnail(generatedThumbnail);
 
                 photoRepository.save(photo);
@@ -69,16 +70,25 @@ public class PhotoService {
         return photo.getThumbnail();
     }
 
-    public Page<Photo> searchPhotos(PhotoSearchCriteria criteria) {
+    public Page<PhotoListProjection> searchPhotos(PhotoSearchCriteria criteria) {
         String sortField = mapSortField(criteria.getSortField());
         Sort sort = criteria.getSortDir() == SortDirection.DESCENDING
-                ? Sort.by(sortField).descending()
-                : Sort.by(sortField).ascending();
+            ? Sort.by(sortField).descending()
+            : Sort.by(sortField).ascending();
         Pageable pageable = PageRequest.of(criteria.getPage(), criteria.getSize(), sort);
 
         return photoRepository.findAll(
             PhotoSpecification.buildSpecification(criteria),
             pageable
+        )
+        .map(photo ->
+            new PhotoListProjection(
+                photo.getId(),
+                photo.getName(),
+                photo.getDescription(),
+                photo.getThumbnail(),
+                photo.getCreatedAt()
+            )
         );
     }
 
