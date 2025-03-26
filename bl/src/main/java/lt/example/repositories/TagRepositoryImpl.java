@@ -14,6 +14,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.Set;
@@ -26,7 +27,7 @@ public class TagRepositoryImpl implements TagRepositoryCustom {
 
     @Override
     public List<Tuple> findPhotoTags(Set<Long> photoIds) {
-        if (photoIds == null || photoIds.isEmpty()) {
+        if ( CollectionUtils.isEmpty(photoIds)) {
             return List.of();
         }
 

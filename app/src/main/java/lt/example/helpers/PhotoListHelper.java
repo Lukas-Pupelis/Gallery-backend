@@ -30,7 +30,9 @@ public class PhotoListHelper {
 
         if (photo.getThumbnail() == null) {
             dto.setThumbnail(photoService.generateAndSaveThumbnail(photo.getId(), photo.getFile()));
-        } else dto.setThumbnail(photo.getThumbnail());
+        } else {
+            dto.setThumbnail(photo.getThumbnail());
+        }
 
         dto.setTags(tagList);
         return dto;

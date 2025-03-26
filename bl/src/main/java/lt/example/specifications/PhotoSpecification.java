@@ -1,5 +1,6 @@
 package lt.example.specifications;
 
+import jakarta.persistence.metamodel.SingularAttribute;
 import lt.example.criteria.PhotoSearchCriteria;
 import lt.example.entities.Photo;
 import lt.example.entities.Photo_;
@@ -17,16 +18,20 @@ import java.util.stream.Collectors;
 
 public class PhotoSpecification {
 
-    public static Specification<Photo> nameContains(String name) {
+    public static Specification<Photo> fieldContains(SingularAttribute<Photo, String> field, String value) {
         return (root, query, builder) ->
-            builder.like(builder.lower(root.get(Photo_.name)),
-                trimString(name));
+            builder.like(
+            builder.lower(root.get(field)),
+            prepareString(value)
+            );
+    }
+
+    public static Specification<Photo> nameContains(String name) {
+        return fieldContains(Photo_.name, name);
     }
 
     public static Specification<Photo> descriptionContains(String description) {
-        return (root, query, builder) ->
-            builder.like(builder.lower(root.get(Photo_.description)),
-                trimString(description));
+        return fieldContains(Photo_.description, description);
     }
 
     public static Specification<Photo> createdAtOn(LocalDate date) {
@@ -40,10 +45,10 @@ public class PhotoSpecification {
     public static Specification<Photo> tagContainsAny(String tagsStr) {
         return (root, query, builder) -> {
             List<String> cleanedTags = Arrays.stream(tagsStr.split(","))
-                    .map(String::trim)
-                    .filter(tag -> !tag.isEmpty())
-                    .map(String::toLowerCase)
-                    .collect(Collectors.toList());
+            .map(String::trim)
+            .filter(tag -> !tag.isEmpty())
+            .map(String::toLowerCase)
+            .collect(Collectors.toList());
 
             if (cleanedTags.isEmpty()) {
                 return builder.conjunction();
@@ -71,7 +76,7 @@ public class PhotoSpecification {
         return spec;
     }
 
-    public static String trimString(String string) {
+    public static String prepareString(String string) {
         return "%" + string.toLowerCase().trim() + "%";
     }
 }
