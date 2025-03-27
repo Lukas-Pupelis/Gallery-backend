@@ -27,7 +27,7 @@ public class PhotoController {
     private final UploadHelper uploadHelper;
     private final SearchHelper searchHelper;
 
-    @PostMapping("/list")
+    @PostMapping("/photo-list")
     public Page<PhotoListDto> searchPhotos(@RequestBody PhotoSearchDto searchDto) {
         return searchHelper.processSearch(searchDto);
     }
