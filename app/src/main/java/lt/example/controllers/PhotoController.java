@@ -5,9 +5,9 @@ import java.io.IOException;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,8 +27,8 @@ public class PhotoController {
     private final UploadHelper uploadHelper;
     private final SearchHelper searchHelper;
 
-    @GetMapping("/list")
-    public Page<PhotoListDto> searchPhotos(@ModelAttribute PhotoSearchDto searchDto) {
+    @PostMapping("/list")
+    public Page<PhotoListDto> searchPhotos(@RequestBody PhotoSearchDto searchDto) {
         return searchHelper.processSearch(searchDto);
     }
 
