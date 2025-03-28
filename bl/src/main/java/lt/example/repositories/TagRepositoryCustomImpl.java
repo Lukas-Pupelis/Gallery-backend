@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Set;
 
 @Repository
-public class TagRepositoryImpl implements TagRepositoryCustom {
+public class TagRepositoryCustomImpl implements TagRepositoryCustom {
 
     @PersistenceContext
     private EntityManager entityManager;
