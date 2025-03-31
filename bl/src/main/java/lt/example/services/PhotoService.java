@@ -19,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,24 +53,6 @@ public class PhotoService {
         return tagRepository.save(tag);
     }
 
-    public String generateAndSaveThumbnail(Long photoId) {
-        Photo photo = photoRepository.findById(photoId)
-        .orElseThrow(() -> new RuntimeException("Photo not found for id: " + photoId));
-
-        if (photo.getThumbnail() == null) {
-            try {
-                String generatedThumbnail = ThumbnailUtility.createThumbnailBase64(photo.getFile());
-                photo.setThumbnail(generatedThumbnail);
-
-                photoRepository.save(photo);
-                return generatedThumbnail;
-            } catch (IOException ex) {
-                throw new RuntimeException("Error generating thumbnail for photo id " + photoId, ex);
-            }
-        }
-        return photo.getThumbnail();
-    }
-
     public Page<PhotoListProjection> searchPhotos(PhotoSearchCriteria criteria) {
         String sortField = mapSortField(criteria.getSortField());
         Sort sort = criteria.getSortDir() == SortDirection.DESCENDING
@@ -77,19 +60,9 @@ public class PhotoService {
             : Sort.by(sortField).ascending();
         Pageable pageable = PageRequest.of(criteria.getPage(), criteria.getSize(), sort);
 
-        return photoRepository.findAll(
-            PhotoSpecification.buildSpecification(criteria),
-            pageable
-        )
-        .map(photo ->
-            new PhotoListProjection(
-                photo.getId(),
-                photo.getName(),
-                photo.getDescription(),
-                photo.getThumbnail(),
-                photo.getCreatedAt()
-            )
-        );
+        Specification<Photo> spec = PhotoSpecification.buildSpecification(criteria);
+
+        return photoRepository.findPhotoListProjectionsBySpec(spec, pageable);
     }
 
     private String mapSortField(SortField sortField) {
