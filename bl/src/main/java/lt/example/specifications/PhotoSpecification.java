@@ -44,6 +44,10 @@ public class PhotoSpecification {
 
     public static Specification<Photo> tagContainsAny(String tagsStr) {
         return (root, query, builder) -> {
+
+            assert query != null;
+            query.distinct(true);
+
             List<String> cleanedTags = Arrays.stream(tagsStr.split(","))
             .map(String::trim)
             .filter(tag -> !tag.isEmpty())
