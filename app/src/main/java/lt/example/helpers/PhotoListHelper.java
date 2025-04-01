@@ -2,6 +2,8 @@ package lt.example.helpers;
 
 import jakarta.persistence.Tuple;
 import lt.example.dtos.PhotoListDto;
+import lt.example.entities.Photo_;
+import lt.example.entities.Tag_;
 import lt.example.repositories.TagRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
@@ -22,30 +24,30 @@ public class PhotoListHelper {
 
     private PhotoListDto toDto(Tuple tuple, List<String> tagList) throws IOException {
         PhotoListDto dto = new PhotoListDto();
-        dto.setId(tuple.get("id", Long.class));
-        dto.setName(tuple.get("name", String.class));
-        dto.setDescription(tuple.get("description", String.class));
-        dto.setThumbnail(tuple.get("thumbnail", String.class));
-        dto.setCreatedAt(tuple.get("createdAt", LocalDateTime.class));
+        dto.setId(tuple.get(Photo_.id.getName(), Long.class));
+        dto.setName(tuple.get(Photo_.name.getName(), String.class));
+        dto.setDescription(tuple.get(Photo_.description.getName(), String.class));
+        dto.setThumbnail(tuple.get(Photo_.thumbnail.getName(), String.class));
+        dto.setCreatedAt(tuple.get(Photo_.createdAt.getName(), LocalDateTime.class));
         dto.setTags(tagList);
         return dto;
     }
 
     public Page<PhotoListDto> toDtoPage(Page<Tuple> projectionsPage) {
         Set<Long> photoIds = projectionsPage.getContent().stream()
-        .map(tuple -> tuple.get("id", Long.class))
+        .map(tuple -> tuple.get(Photo_.id.getName(), Long.class))
         .collect(Collectors.toSet());
 
         List<Tuple> tagData = tagRepository.findPhotoTags(photoIds);
 
         Map<Long, List<String>> tagMap = tagData.stream()
         .collect(Collectors.groupingBy(
-            tuple -> tuple.get("photoId", Long.class),
-            Collectors.mapping(tuple -> tuple.get("tagName", String.class), Collectors.toList())
+            tuple -> tuple.get(Photo_.id.getName(), Long.class),
+            Collectors.mapping(tuple -> tuple.get(Tag_.name.getName(), String.class), Collectors.toList())
         ));
 
         return projectionsPage.map(tuple -> {
-            List<String> tagList = tagMap.getOrDefault(tuple.get("id", Long.class), List.of());
+            List<String> tagList = tagMap.getOrDefault(tuple.get(Photo_.id.getName(), Long.class), List.of());
             try {
                 return toDto(tuple, tagList);
             } catch (IOException e) {

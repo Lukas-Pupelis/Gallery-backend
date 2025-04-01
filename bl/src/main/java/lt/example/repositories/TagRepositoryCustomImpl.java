@@ -37,8 +37,8 @@ public class TagRepositoryCustomImpl implements TagRepositoryCustom {
         Join<Photo, Tag> tagJoin = photoRoot.join(Photo_.tags, JoinType.INNER);
 
         cq.multiselect(
-            photoRoot.get(Photo_.id).alias("photoId"),
-            tagJoin.get(Tag_.name).alias("tagName")
+            photoRoot.get(Photo_.id).alias(Photo_.id.getName()),
+            tagJoin.get(Tag_.name).alias(Tag_.name.getName())
         );
         cq.where(photoRoot.get(Photo_.id).in(photoIds));
         cq.distinct(true);

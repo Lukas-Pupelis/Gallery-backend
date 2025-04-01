@@ -41,11 +41,11 @@ public class PhotoRepositoryCustomImpl implements PhotoRepositoryCustom {
         }
 
         cq.multiselect(
-            root.get(Photo_.id).alias("id"),
-            root.get(Photo_.name).alias("name"),
-            root.get(Photo_.description).alias("description"),
-            root.get(Photo_.thumbnail).alias("thumbnail"),
-            root.get(Photo_.createdAt).alias("createdAt")
+            root.get(Photo_.id).alias(Photo_.id.getName()),
+            root.get(Photo_.name).alias(Photo_.name.getName()),
+            root.get(Photo_.description).alias(Photo_.description.getName()),
+            root.get(Photo_.thumbnail).alias(Photo_.thumbnail.getName()),
+            root.get(Photo_.createdAt).alias(Photo_.createdAt.getName())
         ).distinct(true);
 
         if (pageable.getSort().isSorted()) {
