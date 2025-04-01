@@ -1,9 +1,9 @@
 package lt.example.helpers;
 
+import jakarta.persistence.Tuple;
 import lt.example.dtos.PhotoSearchDto;
 import lt.example.criteria.PhotoSearchCriteria;
 import lt.example.dtos.PhotoListDto;
-import lt.example.projections.PhotoListProjection;
 import lt.example.services.PhotoService;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
@@ -32,7 +32,7 @@ public class SearchHelper {
 
     public Page<PhotoListDto> processSearch(PhotoSearchDto searchDto) {
         PhotoSearchCriteria criteria = toBusinessCriteria(searchDto);
-        Page<PhotoListProjection> photosPage = photoService.searchPhotos(criteria);
+        Page<Tuple> photosPage = photoService.searchPhotos(criteria);
         return photoListHelper.toDtoPage(photosPage);
     }
 }
