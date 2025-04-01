@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import lombok.RequiredArgsConstructor;
 import lt.example.GenericResponse;
@@ -33,13 +35,16 @@ public class PhotoController {
     }
 
     @PostMapping("/upload")
-    public ResponseEntity<GenericResponse> uploadImage(@ModelAttribute PhotoUploadDto photoUploadDto) {
-        if (photoUploadDto.getFile().isEmpty()) {
+    public ResponseEntity<GenericResponse> uploadImage(
+    @RequestPart("file") MultipartFile file,
+    @RequestPart("dataDto") PhotoUploadDto photoUploadDto) {
+        if (file.isEmpty()) {
             return ResponseEntity
             .status(HttpStatus.BAD_REQUEST)
             .body(new GenericResponse("File is empty"));
         }
         try {
+            photoUploadDto.setFile(file);
             uploadHelper.processUpload(photoUploadDto);
             return ResponseEntity.ok(new GenericResponse("File uploaded"));
         } catch (IOException e) {
