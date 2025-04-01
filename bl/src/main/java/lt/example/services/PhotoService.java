@@ -3,12 +3,12 @@ package lt.example.services;
 import java.io.IOException;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import jakarta.persistence.metamodel.SingularAttribute;
 import lombok.RequiredArgsConstructor;
 import lt.example.criteria.PhotoSearchCriteria;
 import lt.example.entities.Photo;
 import lt.example.entities.Tag;
-import lt.example.enums.SortDirection;
-import lt.example.enums.SortField;
 import lt.example.projections.PhotoListProjection;
 import lt.example.repositories.PhotoRepository;
 import lt.example.repositories.TagRepository;
@@ -54,8 +54,11 @@ public class PhotoService {
     }
 
     public Page<PhotoListProjection> searchPhotos(PhotoSearchCriteria criteria) {
-        String sortField = mapSortField(criteria.getSortField());
-        Sort sort = criteria.getSortDir() == SortDirection.DESCENDING
+        SingularAttribute<Photo, ?> sortAttribute = criteria.getSortField().getSortAttribute().get();
+        String sortField = sortAttribute.getName();
+
+        String direction = criteria.getSortDir().getDirectionName();
+        Sort sort = "DESCENDING".equalsIgnoreCase(direction)
             ? Sort.by(sortField).descending()
             : Sort.by(sortField).ascending();
         Pageable pageable = PageRequest.of(criteria.getPage(), criteria.getSize(), sort);
@@ -63,14 +66,5 @@ public class PhotoService {
         Specification<Photo> spec = PhotoSpecification.buildSpecification(criteria);
 
         return photoRepository.findPhotoListProjectionsBySpec(spec, pageable);
-    }
-
-    private String mapSortField(SortField sortField) {
-        return switch (sortField) {
-            case ID -> "id";
-            case NAME -> "name";
-            case DESCRIPTION -> "description";
-            case DATE -> "createdAt";
-        };
     }
 }

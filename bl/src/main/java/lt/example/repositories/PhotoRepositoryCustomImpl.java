@@ -50,16 +50,19 @@ public class PhotoRepositoryCustomImpl implements PhotoRepositoryCustom {
         )).distinct(true);
 
         if (pageable.getSort().isSorted()) {
-            List<Order> orders = new ArrayList<>();
-            for (Sort.Order sortOrder : pageable.getSort()) {
-                orders.add(sortOrder.isAscending()
-                    ? cb.asc(root.get(sortOrder.getProperty()))
-                    : cb.desc(root.get(sortOrder.getProperty()))
-                );
-            }
-            cq.orderBy(orders);
+            applySorting(pageable, root, cq, cb);
         }
 
+        return getPageResultsAndTotal(cq, spec, pageable, cb);
+    }
+
+    private Page<PhotoListProjection> getPageResultsAndTotal(
+        CriteriaQuery<PhotoListProjection> cq,
+        Specification<Photo> spec,
+        Pageable pageable,
+        CriteriaBuilder cb
+    )
+    {
         TypedQuery<PhotoListProjection> query = entityManager.createQuery(cq);
         query.setFirstResult((int) pageable.getOffset());
         query.setMaxResults(pageable.getPageSize());
@@ -77,5 +80,16 @@ public class PhotoRepositoryCustomImpl implements PhotoRepositoryCustom {
         Long total = entityManager.createQuery(countCq).getSingleResult();
 
         return new PageImpl<>(projections, pageable, total);
+    }
+
+    private void applySorting(Pageable pageable, Root<Photo> root, CriteriaQuery<?> cq, CriteriaBuilder cb) {
+        List<Order> orders = new ArrayList<>();
+        for (Sort.Order sortOrder : pageable.getSort()) {
+            orders.add(sortOrder.isAscending()
+                ? cb.asc(root.get(sortOrder.getProperty()))
+                : cb.desc(root.get(sortOrder.getProperty()))
+            );
+        }
+        cq.orderBy(orders);
     }
 }

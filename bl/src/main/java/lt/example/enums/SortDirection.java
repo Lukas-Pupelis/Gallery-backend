@@ -1,6 +1,13 @@
 package lt.example.enums;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
+@Getter
 public enum SortDirection {
-    ASCENDING,
-    DESCENDING
+    ASCENDING("ASCENDING"),
+    DESCENDING("DESCENDING");
+
+    private final String directionName;
 }
