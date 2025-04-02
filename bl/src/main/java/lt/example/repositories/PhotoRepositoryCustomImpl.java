@@ -14,12 +14,11 @@ import lt.example.entities.Photo_;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
 public class PhotoRepositoryCustomImpl implements PhotoRepositoryCustom {
@@ -81,13 +80,11 @@ public class PhotoRepositoryCustomImpl implements PhotoRepositoryCustom {
     }
 
     private void applySorting(Pageable pageable, Root<Photo> root, CriteriaQuery<?> cq, CriteriaBuilder cb) {
-        List<Order> orders = new ArrayList<>();
-        for (Sort.Order sortOrder : pageable.getSort()) {
-            orders.add(sortOrder.isAscending()
-                ? cb.asc(root.get(sortOrder.getProperty()))
-                : cb.desc(root.get(sortOrder.getProperty()))
-            );
-        }
+        List<Order> orders = pageable.getSort().stream()
+        .map(sortOrder -> sortOrder.isAscending()
+            ? cb.asc(root.get(sortOrder.getProperty()))
+            : cb.desc(root.get(sortOrder.getProperty())))
+        .collect(Collectors.toList());
         cq.orderBy(orders);
     }
 }

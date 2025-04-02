@@ -20,10 +20,10 @@ public class PhotoSpecification {
 
     public static Specification<Photo> fieldContains(SingularAttribute<Photo, String> field, String value) {
         return (root, query, builder) ->
-            builder.like(
-            builder.lower(root.get(field)),
-            prepareString(value)
-            );
+        builder.like(
+        builder.lower(root.get(field)),
+        prepareString(value)
+        );
     }
 
     public static Specification<Photo> nameContains(String name) {
