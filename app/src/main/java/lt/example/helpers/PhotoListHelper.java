@@ -33,8 +33,8 @@ public class PhotoListHelper {
         return dto;
     }
 
-    public Page<PhotoListDto> toDtoPage(Page<Tuple> projectionsPage) {
-        Set<Long> photoIds = projectionsPage.getContent().stream()
+    public Page<PhotoListDto> toDtoPage(Page<Tuple> Page) {
+        Set<Long> photoIds = Page.getContent().stream()
         .map(tuple -> tuple.get(Photo_.id.getName(), Long.class))
         .collect(Collectors.toSet());
 
@@ -46,7 +46,7 @@ public class PhotoListHelper {
             Collectors.mapping(tuple -> tuple.get(Tag_.name.getName(), String.class), Collectors.toList())
         ));
 
-        return projectionsPage.map(tuple -> {
+        return Page.map(tuple -> {
             List<String> tagList = tagMap.getOrDefault(tuple.get(Photo_.id.getName(), Long.class), List.of());
             try {
                 return toDto(tuple, tagList);

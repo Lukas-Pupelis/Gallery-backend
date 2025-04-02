@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lt.example.criteria.PhotoSearchCriteria;
 import lt.example.entities.Photo;
 import lt.example.entities.Tag;
+import lt.example.enums.SortDirection;
 import lt.example.repositories.PhotoRepository;
 import lt.example.repositories.TagRepository;
 import lt.example.specifications.PhotoSpecification;
@@ -57,8 +58,8 @@ public class PhotoService {
         SingularAttribute<Photo, ?> sortAttribute = criteria.getSortField().getSortAttribute().get();
         String sortField = sortAttribute.getName();
 
-        String direction = criteria.getSortDir().getDirectionName();
-        Sort sort = "DESCENDING".equalsIgnoreCase(direction)
+        String sortDir = criteria.getSortDir().getDirectionName();
+        Sort sort = sortDir.equalsIgnoreCase(SortDirection.DESCENDING.getDirectionName())
                 ? Sort.by(sortField).descending()
                 : Sort.by(sortField).ascending();
         Pageable pageable = PageRequest.of(criteria.getPage(), criteria.getSize(), sort);
