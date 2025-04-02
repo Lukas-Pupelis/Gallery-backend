@@ -22,7 +22,7 @@ import lt.example.helpers.UploadHelper;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api")
+@RequestMapping("api/photo")
 public class PhotoController {
 
     private final UploadHelper uploadHelper;
