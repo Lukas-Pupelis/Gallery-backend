@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>3.4.2</version>
+    <version>3.4.4</version>
     <relativePath />
     <!-- lookup parent from repository -->
   </parent>
@@ -22,7 +22,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.release>17</maven.compiler.release>
 
-    <spring.version>3.4.2</spring.version>
+    <spring.version>3.4.4</spring.version>
     <lombok.version>1.18.36</lombok.version>
     <junit.version>5.11.0</junit.version>
     <flyway.version>10.20.1</flyway.version>
@@ -40,6 +40,22 @@
 
   <dependencyManagement>
     <dependencies>
+      <dependency>
+        <groupId>org.flywaydb</groupId>
+        <artifactId>flyway-core</artifactId>
+        <version>${flyway.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.flywaydb</groupId>
+        <artifactId>flyway-database-postgresql</artifactId>
+        <version>${flyway.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.postgresql</groupId>
+        <artifactId>postgresql</artifactId>
+        <version>${postgres.version}</version>
+        <scope>runtime</scope>
+      </dependency>
       <dependency>
         <groupId>org.imgscalr</groupId>
         <artifactId>imgscalr-lib</artifactId>
