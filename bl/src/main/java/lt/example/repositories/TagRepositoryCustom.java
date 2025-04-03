@@ -1,10 +1,9 @@
 package lt.example.repositories;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
-import jakarta.persistence.Tuple;
-
 public interface TagRepositoryCustom {
-    List<Tuple> findPhotoTags(Set<Long> photoIds);
+    Map<Long, List<String>> findPhotoTags(Set<Long> photoIds);
 }

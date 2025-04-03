@@ -1,9 +1,6 @@
 package lt.example.helpers;
 
-import jakarta.persistence.Tuple;
 import lt.example.dtos.PhotoListDto;
-import lt.example.entities.Photo_;
-import lt.example.entities.Tag_;
 import lt.example.model.PhotoListModel;
 import lt.example.repositories.TagRepository;
 import org.springframework.data.domain.Page;
@@ -32,19 +29,12 @@ public class PhotoListHelper {
         return dto;
     }
 
-
     public Page<PhotoListDto> toDtoPage(Page<PhotoListModel> Page) {
         Set<Long> photoIds = Page.getContent().stream()
         .map(PhotoListModel::getId)
         .collect(Collectors.toSet());
 
-        List<Tuple> tagData = tagRepository.findPhotoTags(photoIds);
-
-        Map<Long, List<String>> tagMap = tagData.stream()
-        .collect(Collectors.groupingBy(
-            tuple -> tuple.get(Photo_.id.getName(), Long.class),
-            Collectors.mapping(tuple -> tuple.get(Tag_.name.getName(), String.class), Collectors.toList())
-        ));
+        Map<Long, List<String>> tagMap = tagRepository.findPhotoTags(photoIds);
 
         return Page.map(model -> {
             List<String> tagList = tagMap.getOrDefault(model.getId(), List.of());
