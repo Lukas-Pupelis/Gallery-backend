@@ -4,13 +4,13 @@ import java.io.IOException;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import jakarta.persistence.Tuple;
 import jakarta.persistence.metamodel.SingularAttribute;
 import lombok.RequiredArgsConstructor;
 import lt.example.criteria.PhotoSearchCriteria;
 import lt.example.entities.Photo;
 import lt.example.entities.Tag;
 import lt.example.enums.SortDirection;
+import lt.example.model.PhotoListModel;
 import lt.example.repositories.PhotoRepository;
 import lt.example.repositories.TagRepository;
 import lt.example.specifications.PhotoSpecification;
@@ -54,7 +54,7 @@ public class PhotoService {
         return tagRepository.save(tag);
     }
 
-    public Page<Tuple> searchPhotos(PhotoSearchCriteria criteria) {
+    public Page<PhotoListModel> searchPhotos(PhotoSearchCriteria criteria) {
         SingularAttribute<Photo, ?> sortAttribute = criteria.getSortField().getSortAttribute().get();
         String sortField = sortAttribute.getName();
 

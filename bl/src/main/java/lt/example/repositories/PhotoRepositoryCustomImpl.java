@@ -7,16 +7,20 @@ import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Order;
+import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import lt.example.entities.Photo;
 import lt.example.entities.Photo_;
+import lt.example.model.PhotoListModel;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,7 +31,7 @@ public class PhotoRepositoryCustomImpl implements PhotoRepositoryCustom {
     private EntityManager entityManager;
 
     @Override
-    public Page<Tuple> findPhotoListBySpec(Specification<Photo> spec, Pageable pageable) {
+    public Page<PhotoListModel> findPhotoListBySpec(Specification<Photo> spec, Pageable pageable) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Tuple> cq = cb.createTupleQuery();
         Root<Photo> root = cq.from(Photo.class);
@@ -39,19 +43,33 @@ public class PhotoRepositoryCustomImpl implements PhotoRepositoryCustom {
             }
         }
 
+        Path<Long> idPath = root.get(Photo_.id);
+        Path<String> namePath = root.get(Photo_.name);
+        Path<String> descriptionPath = root.get(Photo_.description);
+        Path<String> thumbnailPath = root.get(Photo_.thumbnail);
+        Path<LocalDateTime> createdAtPath = root.get(Photo_.createdAt);
         cq.multiselect(
-            root.get(Photo_.id).alias(Photo_.id.getName()),
-            root.get(Photo_.name).alias(Photo_.name.getName()),
-            root.get(Photo_.description).alias(Photo_.description.getName()),
-            root.get(Photo_.thumbnail).alias(Photo_.thumbnail.getName()),
-            root.get(Photo_.createdAt).alias(Photo_.createdAt.getName())
+            namePath,
+            idPath,
+            descriptionPath,
+            thumbnailPath,
+            createdAtPath
         ).distinct(true);
 
         if (pageable.getSort().isSorted()) {
             applySorting(pageable, root, cq, cb);
         }
 
-        return getPageResultsAndTotal(cq, spec, pageable, cb);
+        Page<Tuple> queryResult = getPageResultsAndTotal(cq, spec, pageable, cb);
+        return queryResult.map(tuple ->
+            PhotoListModel.builder()
+            .id(tuple.get(idPath))
+            .name(tuple.get(namePath))
+            .description(tuple.get(descriptionPath))
+            .thumbnail(tuple.get(thumbnailPath))
+            .createdAt(tuple.get(createdAtPath))
+            .build()
+        );
     }
 
     private Page<Tuple> getPageResultsAndTotal(

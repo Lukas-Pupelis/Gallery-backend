@@ -4,13 +4,12 @@ import jakarta.persistence.Tuple;
 import lt.example.dtos.PhotoListDto;
 import lt.example.entities.Photo_;
 import lt.example.entities.Tag_;
+import lt.example.model.PhotoListModel;
 import lt.example.repositories.TagRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 import lombok.RequiredArgsConstructor;
 
-import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -22,20 +21,21 @@ public class PhotoListHelper {
 
     private final TagRepository tagRepository;
 
-    private PhotoListDto toDto(Tuple tuple, List<String> tagList) throws IOException {
+    private PhotoListDto toDto(PhotoListModel model, List<String> tagList) {
         PhotoListDto dto = new PhotoListDto();
-        dto.setId(tuple.get(Photo_.id.getName(), Long.class));
-        dto.setName(tuple.get(Photo_.name.getName(), String.class));
-        dto.setDescription(tuple.get(Photo_.description.getName(), String.class));
-        dto.setThumbnail(tuple.get(Photo_.thumbnail.getName(), String.class));
-        dto.setCreatedAt(tuple.get(Photo_.createdAt.getName(), LocalDateTime.class));
+        dto.setId(model.getId());
+        dto.setName(model.getName());
+        dto.setDescription(model.getDescription());
+        dto.setThumbnail(model.getThumbnail());
+        dto.setCreatedAt(model.getCreatedAt());
         dto.setTags(tagList);
         return dto;
     }
 
-    public Page<PhotoListDto> toDtoPage(Page<Tuple> Page) {
+
+    public Page<PhotoListDto> toDtoPage(Page<PhotoListModel> Page) {
         Set<Long> photoIds = Page.getContent().stream()
-        .map(tuple -> tuple.get(Photo_.id.getName(), Long.class))
+        .map(PhotoListModel::getId)
         .collect(Collectors.toSet());
 
         List<Tuple> tagData = tagRepository.findPhotoTags(photoIds);
@@ -46,13 +46,9 @@ public class PhotoListHelper {
             Collectors.mapping(tuple -> tuple.get(Tag_.name.getName(), String.class), Collectors.toList())
         ));
 
-        return Page.map(tuple -> {
-            List<String> tagList = tagMap.getOrDefault(tuple.get(Photo_.id.getName(), Long.class), List.of());
-            try {
-                return toDto(tuple, tagList);
-            } catch (IOException e) {
-                throw new RuntimeException("Error converting tuple to DTO", e);
-            }
+        return Page.map(model -> {
+            List<String> tagList = tagMap.getOrDefault(model.getId(), List.of());
+            return toDto(model, tagList);
         });
     }
 }
