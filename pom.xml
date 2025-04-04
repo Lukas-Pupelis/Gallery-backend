@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>3.4.2</version>
+    <version>3.4.4</version>
     <relativePath />
     <!-- lookup parent from repository -->
   </parent>
@@ -22,12 +22,14 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.release>17</maven.compiler.release>
 
-    <spring.version>3.4.2</spring.version>
+    <spring.version>3.4.4</spring.version>
     <lombok.version>1.18.36</lombok.version>
     <junit.version>5.11.0</junit.version>
     <flyway.version>10.20.1</flyway.version>
     <hibernate.version>6.6.7.Final</hibernate.version>
+    <jpamodelgen.version>6.6.11.Final</jpamodelgen.version>
     <postgres.version>42.7.5</postgres.version>
+    <imgscalr.version>4.2</imgscalr.version>
   </properties>
 
   <modules>
@@ -39,27 +41,47 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
+        <groupId>org.flywaydb</groupId>
+        <artifactId>flyway-core</artifactId>
+        <version>${flyway.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.flywaydb</groupId>
+        <artifactId>flyway-database-postgresql</artifactId>
+        <version>${flyway.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.postgresql</groupId>
+        <artifactId>postgresql</artifactId>
+        <version>${postgres.version}</version>
+        <scope>runtime</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.imgscalr</groupId>
+        <artifactId>imgscalr-lib</artifactId>
+        <version>${imgscalr.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.hibernate</groupId>
+        <artifactId>hibernate-jpamodelgen</artifactId>
+        <version>${jpamodelgen.version}</version>
+      </dependency>
+      <dependency>
         <groupId>lt.example</groupId>
         <artifactId>bl</artifactId>
-        <version>${version}</version>
+        <version>${project.version}</version>
         <scope>compile</scope>
       </dependency>
       <dependency>
         <groupId>lt.example</groupId>
         <artifactId>model</artifactId>
-        <version>${version}</version>
+        <version>${project.version}</version>
         <scope>compile</scope>
       </dependency>
       <dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-web</artifactId>
         <version>${spring.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-test</artifactId>
-        <version>${spring.version}</version>
-        <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.springframework.boot</groupId>
