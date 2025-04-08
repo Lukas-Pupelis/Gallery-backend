@@ -3,6 +3,8 @@ package lt.example.dtos;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,6 +15,8 @@ public class PhotoReviewDto {
     private String name;
     private String description;
     private String originalImageBase64;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
     private List<String> tags;
 }
