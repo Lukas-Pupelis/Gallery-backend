@@ -11,6 +11,7 @@ import lt.example.entities.Photo;
 import lt.example.entities.Tag;
 import lt.example.enums.SortDirection;
 import lt.example.model.PhotoListModel;
+import lt.example.model.PhotoUpdateModel;
 import lt.example.repositories.PhotoRepository;
 import lt.example.repositories.TagRepository;
 import lt.example.specifications.PhotoSpecification;
@@ -45,6 +46,24 @@ public class PhotoService {
         .collect(Collectors.toSet());
 
         photo.setTags(tagSet);
+        photoRepository.save(photo);
+    }
+
+    public Photo getPhotoById(Long id) {
+        return photoRepository.findById(id)
+        .orElseThrow(() -> new RuntimeException("Photo not found with id " + id));
+    }
+
+    public void updatePhoto(Long id, PhotoUpdateModel updateModel) {
+        Photo photo = getPhotoById(id);
+        photo.setDescription(updateModel.getDescription());
+
+        photo.getTags().clear();
+        updateModel.getTags().forEach(tagName -> {
+            Tag tag = tagRepository.findByName(tagName)
+            .orElseGet(() -> buildTag(tagName));
+            photo.getTags().add(tag);
+        });
         photoRepository.save(photo);
     }
 
