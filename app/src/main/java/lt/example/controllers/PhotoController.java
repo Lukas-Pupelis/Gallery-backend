@@ -73,9 +73,8 @@ public class PhotoController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<GenericResponse> updatePhoto(
-            @PathVariable Long id,
-            @RequestBody PhotoUpdateDto updateDto) {
+    public ResponseEntity<GenericResponse> updatePhoto(@PathVariable Long id,
+    @RequestBody PhotoUpdateDto updateDto) {
         try {
             photoUpdateHelper.processUpdate(id, updateDto);
             return ResponseEntity.ok(new GenericResponse("Photo updated successfully"));
