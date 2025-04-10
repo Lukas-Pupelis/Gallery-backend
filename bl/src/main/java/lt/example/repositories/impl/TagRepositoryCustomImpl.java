@@ -1,4 +1,4 @@
-package lt.example.repositories;
+package lt.example.repositories.impl;
 
 import jakarta.persistence.Tuple;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -14,6 +14,8 @@ import lt.example.entities.Tag_;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
+import lt.example.repositories.TagRepositoryCustom;
+
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 

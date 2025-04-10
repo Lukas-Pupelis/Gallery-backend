@@ -47,12 +47,13 @@ public class PhotoController {
 
     @PostMapping("/upload")
     public ResponseEntity<GenericResponse> uploadImage(
-    @RequestPart("file") MultipartFile file,
-    @RequestPart("dataDto") PhotoUploadDto photoUploadDto) {
+            @RequestPart("file") MultipartFile file,
+            @RequestPart("dataDto") PhotoUploadDto photoUploadDto
+    ) {
         if (file.isEmpty()) {
             return ResponseEntity
-            .status(HttpStatus.BAD_REQUEST)
-            .body(new GenericResponse("File is empty"));
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new GenericResponse("File is empty"));
         }
         try {
             photoUploadDto.setFile(file);
@@ -60,8 +61,8 @@ public class PhotoController {
             return ResponseEntity.ok(new GenericResponse("File uploaded"));
         } catch (IOException e) {
             return ResponseEntity
-            .status(HttpStatus.INTERNAL_SERVER_ERROR)
-            .body(new GenericResponse("Error processing file"));
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new GenericResponse("Error processing file"));
         }
     }
 
@@ -73,8 +74,10 @@ public class PhotoController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<GenericResponse> updatePhoto(@PathVariable Long id,
-    @RequestBody PhotoUpdateDto updateDto) {
+    public ResponseEntity<GenericResponse> updatePhoto(
+            @PathVariable Long id,
+            @RequestBody PhotoUpdateDto updateDto
+    ) {
         try {
             photoUpdateHelper.processUpdate(id, updateDto);
             return ResponseEntity.ok(new GenericResponse("Photo updated successfully"));

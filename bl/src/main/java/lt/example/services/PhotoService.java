@@ -41,9 +41,9 @@ public class PhotoService {
         photo.setThumbnail(ThumbnailUtility.createThumbnailBase64(photoData));
 
         Set<Tag> tagSet = tagNames.stream()
-        .map(tagName -> tagRepository.findByName(tagName)
-        .orElseGet(() -> buildTag(tagName)))
-        .collect(Collectors.toSet());
+            .map(tagName -> tagRepository.findByName(tagName)
+            .orElseGet(() -> buildTag(tagName)))
+            .collect(Collectors.toSet());
 
         photo.setTags(tagSet);
         photoRepository.save(photo);
@@ -51,7 +51,7 @@ public class PhotoService {
 
     public Photo getPhotoById(Long id) {
         return photoRepository.findById(id)
-        .orElseThrow(() -> new RuntimeException("Photo not found with id " + id));
+                .orElseThrow(() -> new RuntimeException("Photo not found with id " + id));
     }
 
     public void updatePhoto(Long id, PhotoUpdateModel updateModel) {
@@ -79,8 +79,8 @@ public class PhotoService {
 
         String sortDir = criteria.getSortDir().getDirectionName();
         Sort sort = sortDir.equalsIgnoreCase(SortDirection.DESCENDING.getDirectionName())
-                ? Sort.by(sortField).descending()
-                : Sort.by(sortField).ascending();
+            ? Sort.by(sortField).descending()
+            : Sort.by(sortField).ascending();
         Pageable pageable = PageRequest.of(criteria.getPage(), criteria.getSize(), sort);
 
         Specification<Photo> spec = PhotoSpecification.buildSpecification(criteria);

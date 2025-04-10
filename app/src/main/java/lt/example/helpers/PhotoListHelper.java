@@ -31,8 +31,8 @@ public class PhotoListHelper {
 
     public Page<PhotoListDto> toDtoPage(Page<PhotoListModel> Page) {
         Set<Long> photoIds = Page.getContent().stream()
-        .map(PhotoListModel::getId)
-        .collect(Collectors.toSet());
+            .map(PhotoListModel::getId)
+            .collect(Collectors.toSet());
 
         Map<Long, List<String>> tagMap = tagRepository.findPhotoTags(photoIds);
 

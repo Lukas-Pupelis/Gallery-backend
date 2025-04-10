@@ -23,8 +23,8 @@ public class PhotoReviewHelper {
         dto.setOriginalImageBase64(fileData != null ? Base64.getEncoder().encodeToString(fileData) : null);
 
         List<String> tagNames = photo.getTags().stream()
-        .map(Tag::getName)
-        .collect(Collectors.toList());
+            .map(Tag::getName)
+            .collect(Collectors.toList());
 
         dto.setTags(tagNames);
         return dto;

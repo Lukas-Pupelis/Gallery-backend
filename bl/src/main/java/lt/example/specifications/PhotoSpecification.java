@@ -49,10 +49,10 @@ public class PhotoSpecification {
             query.distinct(true);
 
             List<String> cleanedTags = Arrays.stream(tagsStr.split(","))
-            .map(String::trim)
-            .filter(tag -> !tag.isEmpty())
-            .map(String::toLowerCase)
-            .collect(Collectors.toList());
+                .map(String::trim)
+                .filter(tag -> !tag.isEmpty())
+                .map(String::toLowerCase)
+                .collect(Collectors.toList());
 
             if (cleanedTags.isEmpty()) {
                 return builder.conjunction();
