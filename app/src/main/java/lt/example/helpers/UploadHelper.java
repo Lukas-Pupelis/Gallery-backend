@@ -23,9 +23,9 @@ public class UploadHelper {
         Set<String> tagNames;
         if (photoUploadDto.getTags() != null) {
             tagNames = photoUploadDto.getTags().stream()
-            .map(String::trim)
-            .filter(tag -> !tag.isEmpty())
-            .collect(Collectors.toSet());
+                .map(String::trim)
+                .filter(tag -> !tag.isEmpty())
+                .collect(Collectors.toSet());
         } else {
             tagNames = Collections.emptySet();
         }

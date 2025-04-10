@@ -1,4 +1,4 @@
-package lt.example.repositories;
+package lt.example.repositories.impl;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -13,6 +13,7 @@ import jakarta.persistence.criteria.Root;
 import lt.example.entities.Photo;
 import lt.example.entities.Photo_;
 import lt.example.model.PhotoListModel;
+import lt.example.repositories.PhotoRepositoryCustom;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;

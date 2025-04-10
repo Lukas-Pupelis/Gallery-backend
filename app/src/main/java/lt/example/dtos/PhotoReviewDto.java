@@ -10,14 +10,13 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class PhotoListDto {
+public class PhotoReviewDto {
     private Long id;
     private String name;
     private String description;
-    private String thumbnail;
-    private List<String> tags;
-    private Object stuff;
+    private String originalImageBase64;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
+    private List<String> tags;
 }

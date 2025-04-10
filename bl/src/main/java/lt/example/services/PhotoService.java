@@ -11,6 +11,7 @@ import lt.example.entities.Photo;
 import lt.example.entities.Tag;
 import lt.example.enums.SortDirection;
 import lt.example.model.PhotoListModel;
+import lt.example.model.PhotoUpdateModel;
 import lt.example.repositories.PhotoRepository;
 import lt.example.repositories.TagRepository;
 import lt.example.specifications.PhotoSpecification;
@@ -40,11 +41,29 @@ public class PhotoService {
         photo.setThumbnail(ThumbnailUtility.createThumbnailBase64(photoData));
 
         Set<Tag> tagSet = tagNames.stream()
-        .map(tagName -> tagRepository.findByName(tagName)
-        .orElseGet(() -> buildTag(tagName)))
-        .collect(Collectors.toSet());
+            .map(tagName -> tagRepository.findByName(tagName)
+            .orElseGet(() -> buildTag(tagName)))
+            .collect(Collectors.toSet());
 
         photo.setTags(tagSet);
+        photoRepository.save(photo);
+    }
+
+    public Photo getPhotoById(Long id) {
+        return photoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Photo not found with id " + id));
+    }
+
+    public void updatePhoto(Long id, PhotoUpdateModel updateModel) {
+        Photo photo = getPhotoById(id);
+        photo.setDescription(updateModel.getDescription());
+
+        photo.getTags().clear();
+        updateModel.getTags().forEach(tagName -> {
+            Tag tag = tagRepository.findByName(tagName)
+            .orElseGet(() -> buildTag(tagName));
+            photo.getTags().add(tag);
+        });
         photoRepository.save(photo);
     }
 
@@ -60,8 +79,8 @@ public class PhotoService {
 
         String sortDir = criteria.getSortDir().getDirectionName();
         Sort sort = sortDir.equalsIgnoreCase(SortDirection.DESCENDING.getDirectionName())
-                ? Sort.by(sortField).descending()
-                : Sort.by(sortField).ascending();
+            ? Sort.by(sortField).descending()
+            : Sort.by(sortField).ascending();
         Pageable pageable = PageRequest.of(criteria.getPage(), criteria.getSize(), sort);
 
         Specification<Photo> spec = PhotoSpecification.buildSpecification(criteria);
